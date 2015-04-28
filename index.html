@@ -16,7 +16,7 @@ window.onload = function() {
 		
 		var spWorker = new Worker("./nupic.examples.sp/HelloSP.js");
 
-		spWorker.onmessage = function (event) {
+		spWorker.onmessage = function(event) {
 			if (event.data === "done") {
 				document.getElementById("progress").innerHTML += " done";
 				clearInterval(timer);
