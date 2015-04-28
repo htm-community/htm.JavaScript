@@ -1,22 +1,22 @@
 var URL = location.protocol + "//" + location.host;
 
-importScripts(URL + "/htm.JavaScript/cipun/util.js");
-importScripts(URL + "/htm.JavaScript/nupic/Connections.js");
-importScripts(URL + "/htm.JavaScript/nupic/Parameters.js");
-importScripts(URL + "/htm.JavaScript/nupic.util/MersenneTwister.js");
-importScripts(URL + "/htm.JavaScript/nupic.util/ArrayUtils.js");
-importScripts(URL + "/htm.JavaScript/nupic.util/SparseMatrix.js");
-importScripts(URL + "/htm.JavaScript/nupic.util/SparseBinaryMatrix.js");
-importScripts(URL + "/htm.JavaScript/nupic.util/SparseObjectMatrix.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/Column.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/Cell.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/Column.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/Segment.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/ProximalDendrite.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/DistalDendrite.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/Pool.js");
-importScripts(URL + "/htm.JavaScript/nupic.model/Synapse.js");
-importScripts(URL + "/htm.JavaScript/nupic.research/SpatialPooler.js");
+importScripts(URL + "/htm.JavaScript/cipun/util.js",
+			  URL + "/htm.JavaScript/nupic/Connections.js",
+			  URL + "/htm.JavaScript/nupic/Parameters.js",
+			  URL + "/htm.JavaScript/nupic.util/MersenneTwister.js",
+			  URL + "/htm.JavaScript/nupic.util/ArrayUtils.js",
+			  URL + "/htm.JavaScript/nupic.util/SparseMatrix.js",
+			  URL + "/htm.JavaScript/nupic.util/SparseBinaryMatrix.js",
+			  URL + "/htm.JavaScript/nupic.util/SparseObjectMatrix.js",
+			  URL + "/htm.JavaScript/nupic.model/Column.js",
+			  URL + "/htm.JavaScript/nupic.model/Cell.js",
+			  URL + "/htm.JavaScript/nupic.model/Column.js",
+			  URL + "/htm.JavaScript/nupic.model/Segment.js",
+			  URL + "/htm.JavaScript/nupic.model/ProximalDendrite.js",
+			  URL + "/htm.JavaScript/nupic.model/DistalDendrite.js",
+			  URL + "/htm.JavaScript/nupic.model/Pool.js",
+			  URL + "/htm.JavaScript/nupic.model/Synapse.js",
+			  URL + "/htm.JavaScript/nupic.research/SpatialPooler.js");
 
 /**
  * A simple program that demonstrates the working of the spatial pooler
