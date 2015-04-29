@@ -1,23 +1,3 @@
-var URL = location.protocol + "//" + location.host;
-
-importScripts(URL + "/htm.JavaScript/cipun/util.js",
-              URL + "/htm.JavaScript/nupic/Connections.js",
-              URL + "/htm.JavaScript/nupic/Parameters.js",
-              URL + "/htm.JavaScript/nupic.util/MersenneTwister.js",
-              URL + "/htm.JavaScript/nupic.util/ArrayUtils.js",
-              URL + "/htm.JavaScript/nupic.util/SparseMatrix.js",
-              URL + "/htm.JavaScript/nupic.util/SparseBinaryMatrix.js",
-              URL + "/htm.JavaScript/nupic.util/SparseObjectMatrix.js",
-              URL + "/htm.JavaScript/nupic.model/Column.js",
-              URL + "/htm.JavaScript/nupic.model/Cell.js",
-              URL + "/htm.JavaScript/nupic.model/Column.js",
-              URL + "/htm.JavaScript/nupic.model/Segment.js",
-              URL + "/htm.JavaScript/nupic.model/ProximalDendrite.js",
-              URL + "/htm.JavaScript/nupic.model/DistalDendrite.js",
-              URL + "/htm.JavaScript/nupic.model/Pool.js",
-              URL + "/htm.JavaScript/nupic.model/Synapse.js",
-              URL + "/htm.JavaScript/nupic.research/SpatialPooler.js");
-
 /**
  * A simple program that demonstrates the working of the spatial pooler
  * 
@@ -29,14 +9,32 @@ importScripts(URL + "/htm.JavaScript/cipun/util.js",
  * @param inputDimensions         The size of the input.  {m, n} will give a size of m x n
  * @param columnDimensions        The size of the 2 dimensional array of columns
  */
-var HelloSP = function(inputDimensions, columnDimensions) {
+var HelloSP = function(inputDimensions, columnDimensions, url) {
 
-    this.parameters    = null;
+	importScripts(url + "cipun/util.js",
+				  url + "nupic/Connections.js",
+				  url + "nupic/Parameters.js",
+				  url + "nupic.util/MersenneTwister.js",
+				  url + "nupic.util/ArrayUtils.js",
+				  url + "nupic.util/SparseMatrix.js",
+				  url + "nupic.util/SparseBinaryMatrix.js",
+				  url + "nupic.util/SparseObjectMatrix.js",
+				  url + "nupic.model/Column.js",
+				  url + "nupic.model/Cell.js",
+				  url + "nupic.model/Column.js",
+				  url + "nupic.model/Segment.js",
+				  url + "nupic.model/ProximalDendrite.js",
+				  url + "nupic.model/DistalDendrite.js",
+				  url + "nupic.model/Pool.js",
+				  url + "nupic.model/Synapse.js",
+				  url + "nupic.research/SpatialPooler.js");
+
+	this.parameters    = null;
     this.inputArray    = [];
     this.activeArray   = [];
     this.inputSize     = 1;
     this.columnNumber  = 1;
-    
+	
     for (var i=0; i<inputDimensions.length; i++) {
     	this.inputSize *= inputDimensions[i];
     }	
@@ -112,7 +110,8 @@ HelloSP.prototype = {
 	},
 	
 	main: function(args) {	// void(String[])
-	    // Lesson 1
+					  
+		// Lesson 1
 	    postMessage("<p></p><p>Following columns represent the SDR<br /> \
 					 Different set of columns each time since we randomize the input<br /> \
 					 Lesson - different input vectors give different SDRs</p><p></p>");
@@ -154,7 +153,10 @@ HelloSP.prototype = {
 	}
 };
 
-var example = new HelloSP([32, 32], [64, 64]);
+onmessage = function(event) {
+	var example = new HelloSP([32, 32], [64, 64], event.data.url);
 
-example.main([]);
+	example.main([]);
+};
+
 

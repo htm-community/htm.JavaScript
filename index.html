@@ -26,7 +26,15 @@ window.onload = function() {
 			}
 		};
 		
-		spWorker.postMessage("");
+		spWorker.onerror = function(event) {
+			document.getElementById("error").innerHTML = event.message + " (" + event.filename + ":" + event.lineno + ")";
+			this.terminate();
+			clearInterval(timer);
+		};
+		
+		spWorker.postMessage({
+			url: window.location.protocol + "//" + window.location.host + window.location.pathname
+		});
 	} else {
 		document.getElementById("progress").innerHTML = "Sorry, but this JavaScript program requires Firefox.";
 	}
@@ -36,5 +44,6 @@ window.onload = function() {
 <body>
 <div id="progress"></div>
 <div id="result"></div>
+<div id="error" style="color:#ff0000; font-weight:bold;"></div>
 </body>
 </html>
