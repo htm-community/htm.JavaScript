@@ -414,8 +414,9 @@ SpatialPooler.prototype = {
     	for (var i=0; i<activeColumns.length; i++) {
     		var pool = c.getPotentialPools().getObject(activeColumns[i]);
     		
-    		if (isNullOrUndefined(pool)) {
-    			console.log("no pool");
+    		if (isNullOrUndefined(pool)) {	// just to be sure the fix in ArrayUtils::nGreatest continues to work
+				postMessage("<p style=\"color:#ff0000;\">pool is undefined</p>");
+				continue;
     		}
     		
     		var perm = pool.getDensePermanences(c);
@@ -904,6 +905,7 @@ SpatialPooler.prototype = {
     inhibitColumnsGlobal: function(c, overlaps, density) {	// int[](Connections c, double[] overlaps, double density)
     	var numCols = c.getNumColumns();
     	var numActive = Math.floor(density * numCols);
+		var o = overlaps;
     	var winners = ArrayUtils.nGreatest(overlaps, numActive);
     	winners.sort(function(a, b) {
     		  return a - b;

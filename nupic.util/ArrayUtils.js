@@ -1118,20 +1118,22 @@ var ArrayUtils = {
         var i;
         var key;
         for (var j=1; j<array.length; j++) {
-            key = array[j];
+            key = array[j];	// j starts at 1, so array[0] can never become key
             for (i=j-1; i>=0 && array[i]<key; i--) {
                 array[i+1] = array[i];
             }
-            array[i+1] = key;
+            array[i+1] = key;			
             places.set(key, j);
         }
 
         var retVal = new Array(n);
         retVal.fill(0);
         for (i=0; i<n; i++) {
-            retVal[i] = places.get(array[i]);
+			if (places.has(array[i])) {	// prevents "undefined" in case the *original* array[0] is called upon
+				retVal[i] = places.get(array[i]);
+			}
         }
-        return retVal;
+		return retVal;
     },
 
     raiseValuesBy: function() {	    
