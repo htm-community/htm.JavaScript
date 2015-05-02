@@ -38,8 +38,7 @@ SpatialPooler.prototype = {
      * @param c
      */
     initMatrices: function(c) {	// void(Connections c)
-    	
-    	var mem = c.getMemory();
+		var mem = c.getMemory();
     	
     	if (isNullOrUndefined(mem)) {
     		mem = new SparseObjectMatrix(c.getColumnDimensions());
@@ -144,7 +143,7 @@ SpatialPooler.prototype = {
         this.updateBookeepingVars(c, learn);
         var overlaps = this.calculateOverlap(c, inputVector);
         
-        var boostedOverlaps;
+        var boostedOverlaps = [];
         if (learn) {
         	boostedOverlaps = ArrayUtils.multiply(c.getBoostFactors(), overlaps);
         } else {
@@ -158,7 +157,7 @@ SpatialPooler.prototype = {
         	this.updateDutyCycles(c, overlaps, activeColumns);
         	this.bumpUpWeakColumns(c);
         	this.updateBoostFactors(c);
-        	if(this.isUpdateRound(c)) {
+        	if (this.isUpdateRound(c)) {
         		this.updateInhibitionRadius(c);
         		this.updateMinDutyCycles(c);
         	}
@@ -413,12 +412,6 @@ SpatialPooler.prototype = {
     	ArrayUtils.setIndexesTo(permChanges, inputIndices, c.getSynPermActiveInc());
     	for (var i=0; i<activeColumns.length; i++) {
     		var pool = c.getPotentialPools().getObject(activeColumns[i]);
-    		
-    		if (isNullOrUndefined(pool)) {	// just to be sure the fix in ArrayUtils::nGreatest continues to work
-				postMessage("<p style=\"color:#ff0000;\">pool is undefined</p>");
-				continue;
-    		}
-    		
     		var perm = pool.getDensePermanences(c);
     		var indexes = pool.getSparseConnections();
     		ArrayUtils.raiseValuesBy(permChanges, perm);
