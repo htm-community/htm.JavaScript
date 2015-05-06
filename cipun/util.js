@@ -17,6 +17,7 @@ function equals(a1, a2) {
 	if (a1.length !== a2.length) {
 		return false;
 	}
+
 	for (var i=0; i<a1.length; i++) {
 		if (Array.isArray(a1[i]) && Array.isArray(a2[i])) {
 			 if (equals(a1[i], a2[i])) {
@@ -30,58 +31,76 @@ function equals(a1, a2) {
 			}
 		}
 	}
+
 	return true;
 }
 
-function toMercator(lon, lat) {
-	var x = lon * 20037508.34 / 180;
-	var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
-	y = y * 20037508.34 / 180;
-	
-	return [x, y];
-}
-
-function toGeocentric(lon, lat, alt) {	// double(double, double, double)
-
-	lon = lon * Math.PI/180.0;
-	lat = lat * Math.PI/180.0;
-
-	var PI_OVER_2 = Math.PI / 2.0;
-	
-	if (lat < -PI_OVER_2 && lat > -1.001 * PI_OVER_2 ) {
-    	lat = -PI_OVER_2;
-    } else if ( lat > PI_OVER_2 && lat < 1.001 * PI_OVER_2 ) {
-      	lat = PI_OVER_2;
-  	} else if ((lat < -PI_OVER_2) || (lat > PI_OVER_2)) { 
-    	throw new Error("latitude out of range");
-  	}
-
-    if (lon > Math.PI) {
-    	lon -= (2.0 * Math.PI);
-    }
-    
-    var Rn = 6378137.0;
-    
-    var x = (Rn + alt) * Math.cos(lat) * Math.cos(lon);
-    var y = (Rn + alt) * Math.cos(lat) * Math.sin(lon);
-    var z = (Rn + alt) * Math.sin(lat);
-    
-    return [x, y, z];
-}
-
-function makeArray(arr, dims) {			
-
+/*
+ * Returns an array of arbitrary dimensionality
+ * Examples: var a = makeArray([10]);	// returns 1D-Array, 10 empty slots
+ *           var a = makeArray([10], -1);	// returns 1D-Array, initialized to -1
+ *           var a = makeArray([2, 3, 4, 5]);	// returns 2x3x4x5 Array
+ */
+function newArray(dims, init, arr) {
+			
 	if (dims[1] === undefined) {
-	    return arr;
+	    var a = new Array(dims[0]);
+		if (init !== undefined) {
+			a.fill(init);
+		}
+		return a;
     }
-		
+
     arr = new Array(dims[0]);
-	
+
     for (var i=0; i<dims[0]; i++) {
 	    arr[i] = new Array(dims[1]);
-	    arr[i] = makeArray(arr[i], dims.slice(1));
+	    arr[i] = newArray(dims.slice(1), init, arr[i]);
     }
 
     return arr;
 }
+
+/**
+ * Javascript HashCode v1.0.0
+ * This function returns a hash code (MD5) based on the argument object.
+ * http://pmav.eu/stuff/javascript-hash-code
+ *
+ * Example:
+ *  var s = "my String";
+ *  alert(HashCode.value(s));
+ *
+ * pmav, 2010
+ */
+var HashCode = function() {
+
+    var serialize = function(object) {
+        // Private
+        var type, serializedCode = "";
+
+        type = typeof object;
+
+        if (type === 'object') {
+            var element;
+
+            for (element in object) {
+                serializedCode += "[" + type + ":" + element + serialize(object[element]) + "]";
+            }
+
+        } else if (type === 'function') {
+            serializedCode += "[" + type + ":" + object.toString() + "]";
+        } else {
+            serializedCode += "[" + type + ":" + object+"]";
+        }
+
+        return serializedCode.replace(/\s/g, "");
+    };
+
+    // Public, API
+    return {
+        value : function(object) {
+            return MD5(serialize(object));
+        }
+    };
+}();
 

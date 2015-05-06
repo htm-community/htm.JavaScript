@@ -62,29 +62,18 @@ SpatialPooler.prototype = {
         
         c.setConnectedMatrix(new SparseBinaryMatrix([numColumns, numInputs]));
         
-        var tieBreaker = new Array(numColumns);
-        tieBreaker.fill(0);
+        var tieBreaker = newArray([numColumns], 0);
         for (var i=0; i<numColumns; i++) {
             tieBreaker[i] = 0.01 * c.getRandom().nextDouble();
         }
         c.setTieBreaker(tieBreaker);
         
         //Initialize state meta-management statistics
-        var odc = new Array(numColumns);
-        odc.fill(0);
-        c.setOverlapDutyCycles(odc);
-        var adc = new Array(numColumns);
-        adc.fill(0);
-        c.setActiveDutyCycles(adc);
-        var modc = new Array(numColumns);
-        modc.fill(0);
-        c.setMinOverlapDutyCycles(modc);
-        var madc = new Array(numColumns);
-        madc.fill(0);
-        c.setMinActiveDutyCycles(madc);
-        var bf = new Array(numColumns);
-        bf.fill(1);
-        c.setBoostFactors(bf);       
+        c.setOverlapDutyCycles(newArray([numColumns], 0));
+        c.setActiveDutyCycles(newArray([numColumns], 0));
+        c.setMinOverlapDutyCycles(newArray([numColumns], 0));
+        c.setMinActiveDutyCycles(newArray([numColumns], 0));
+        c.setBoostFactors(newArray([numColumns], 1));       
     },
 
     /**
@@ -270,10 +259,8 @@ SpatialPooler.prototype = {
      *              			the sparse set of columns which survived inhibition
      */
     updateDutyCycles: function(c, overlaps, activeColumns) {	// void(Connections c, int[] overlaps, int[] activeColumns)
-    	var overlapArray = new Array(c.getNumColumns());
-		overlapArray.fill(0);
-    	var activeArray = new Array(c.getNumColumns());
-    	activeArray.fill(0);
+    	var overlapArray = newArray([c.getNumColumns()], 0);
+    	var activeArray = newArray([c.getNumColumns()], 0);
 		ArrayUtils.greaterThanXThanSetToY(overlaps, 0, 1);
     	if (activeColumns.length > 0) {
     		ArrayUtils.setIndexesTo(activeArray, activeColumns, 1);
@@ -331,10 +318,8 @@ SpatialPooler.prototype = {
         	return 0;
         }
         
-        var maxCoord = new Array(c.getInputDimensions().length);
-        var minCoord = new Array(c.getInputDimensions().length);
-        maxCoord.fill(-1);
-        minCoord.fill(ArrayUtils.max(dimensions));
+        var maxCoord = newArray([c.getInputDimensions().length], -1);
+        var minCoord = newArray([c.getInputDimensions().length], ArrayUtils.max(dimensions));
         var inputMatrix = c.getInputMatrix();
         for (var i=0; i<connected.length; i++) {
             maxCoord = ArrayUtils.maxBetween(maxCoord, inputMatrix.computeCoordinates(connected[i]));
@@ -407,8 +392,7 @@ SpatialPooler.prototype = {
     adaptSynapses: function(c, inputVector, activeColumns) {	// void(Connections c, int[] inputVector, int[] activeColumns)
     	var inputIndices = ArrayUtils.where(inputVector, ArrayUtils.INT_GREATER_THAN_0);
     	
-    	var permChanges = new Array(c.getNumInputs());
-    	permChanges.fill(-1 * c.getSynPermInactiveDec());
+    	var permChanges = newArray([c.getNumInputs()], -1 * c.getSynPermInactiveDec());
     	ArrayUtils.setIndexesTo(permChanges, inputIndices, c.getSynPermActiveInc());
     	for (var i=0; i<activeColumns.length; i++) {
     		var pool = c.getPotentialPools().getObject(activeColumns[i]);
@@ -618,8 +602,7 @@ SpatialPooler.prototype = {
         	pick.add(potentialPool[randIdx]);
         }
         
-        var perm = new Array(c.getNumInputs());
-        perm.fill(0);
+        var perm = newArray([c.getNumInputs()], 0);
         for (var i=0; i<potentialPool.length; i++) {
         	var idx = parseInt(potentialPool[i]);
         	if (pick.has(idx)) {	
@@ -750,8 +733,7 @@ SpatialPooler.prototype = {
         
         for (var i=0; i<dimensions.length; i++) {
             var range = ArrayUtils.range(columnCoords[i] - inhibitionRadius, columnCoords[i] + inhibitionRadius + 1);
-            var curRange = new Array(range.length);
-            curRange.fill(0);
+            var curRange = newArray([range.length], 0);
             
             if (wrapAround) {
                 for (var j=0; j<curRange.length; j++) {
@@ -768,8 +750,7 @@ SpatialPooler.prototype = {
         
         var neighborList = ArrayUtils.dimensionsToCoordinateList(dimensionCoords);
         // Alternative begin (To change remove/add "//")
-        //var neighbors = new Array(neighborList.length);
-        //neighbors.fill(0);
+        //var neighbors = newArray([neighborList.length], 0);
         var neighbors = [];	// To be able to use push here and in mapPotential which is closer to the Java implementation
         // Alternative end
         var size = neighborList.length;
@@ -829,8 +810,7 @@ SpatialPooler.prototype = {
      * @return
      */
     calculateOverlap: function(c, inputVector) {	// int[](Connections c, int[] inputVector)
-        var overlaps = new Array(c.getNumColumns());
-        overlaps.fill(0);
+        var overlaps = newArray([c.getNumColumns()], 0);
         c.getConnectedCounts().rightVecSumAtNZ(inputVector, overlaps);
         ArrayUtils.lessThanXThanSetToY(overlaps, Math.floor(c.getStimulusThreshold()), 0);
         return overlaps;
@@ -920,8 +900,7 @@ SpatialPooler.prototype = {
      */
     inhibitColumnsLocal: function(c, overlaps, density) {	// int[](Connections c, double[] overlaps, double density)
     	var numCols = c.getNumColumns();
-    	var activeColumns = new Array(numCols);
-		activeColumns.fill(0);
+    	var activeColumns = newArray([numCols], 0);
     	var addToWinners = ArrayUtils.max(overlaps) / 1000.0;
     	for (var i=0; i<numCols; i++) {
     		var maskNeighbors = this.getNeighborsND(c, i, c.getMemory(), c.getInhibitionRadius(), false);
@@ -971,8 +950,7 @@ SpatialPooler.prototype = {
     	if (mask.length < 1) {
     		boostInterim = c.getBoostFactors();
     	} else {
-	    	var numerator = new Array(c.getNumColumns());
-	    	numerator.fill(1 - c.getMaxBoost());
+	    	var numerator = newArray([c.getNumColumns()], 1 - c.getMaxBoost());
 	    	boostInterim = ArrayUtils.divide(numerator, minActiveDutyCycles, 0, 0);
 	    	boostInterim = ArrayUtils.multiply(boostInterim, activeDutyCycles, 0, 0);
 	    	boostInterim = ArrayUtils.d_add(boostInterim, c.getMaxBoost());

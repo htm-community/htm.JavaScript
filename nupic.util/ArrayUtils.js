@@ -35,8 +35,7 @@ var ArrayUtils = {
      */
     interleave: function(first, second) {	// <F, S> Object[](F, S)
         var flen = first.length, slen = second.length;
-        var retVal = new Array(flen + slen);
-        retVal.fill(0);
+        var retVal = newArray([flen + slen], 0);
         
         for (var i=0, j=0, k=0; i<flen || j<slen;) {
             if (i < flen) {
@@ -62,8 +61,7 @@ var ArrayUtils = {
      * @return
      */
     diff: function(d) {	// double[](double[])
-        var retVal = new Array(d.length - 1);
-        retVal.fill(0);
+        var retVal = newArray([d.length - 1], 0);
         for (var i=0; i<d.length-1; i++) {
             retVal[i] = d[i+1] - d[i];
         }
@@ -164,8 +162,7 @@ var ArrayUtils = {
     initDimensionMultiples: function(dimensions) { // int[](int[])
         var holder = 1;
         var len = dimensions.length;
-        var dimensionMultiples = new Array(dimensions.length);
-        dimensionMultiples.fill(0);
+        var dimensionMultiples = newArray([dimensions.length], 0);
         for (var i=0; i<len; i++) {
             holder *= (i === 0 ? 1 : dimensions[len-i]);
             dimensionMultiples[len-1-i] = holder;
@@ -180,8 +177,7 @@ var ArrayUtils = {
      * @return
      */
     bitsToString: function(arr) {	// String(int[])
-        s = new Array(arr.length);
-        s.fill(".");
+        s = newArray([arr.length], ".");
         s[0] = "c";
         for (var i=0; i<arr.length; i++) {
             if (arr[i] === 1) {
@@ -248,8 +244,7 @@ var ArrayUtils = {
      * @return
      */
     toDoubleArray: function(ints) {	// double[](int[])
-        var retVal = new Array(ints.length);
-        retVal.fill(0);
+        var retVal = newArray([ints.length], 0);
         for (var i=0; i<ints.length; i++) {
             retVal[i] = ints[i];
         }
@@ -318,8 +313,7 @@ var ArrayUtils = {
      * @return
      */
     toIntArray: function(doubs) {	// int[](double[])
-        var retVal = new Array(doubs.length);
-        retVal.fill(0);
+        var retVal = newArray([doubs.length], 0);
         for (var i=0; i<doubs.length; i++) {
             retVal[i] = Math.floor(doubs[i]);
         }
@@ -334,8 +328,7 @@ var ArrayUtils = {
      * @return
      */
     maximum: function(doubs, maxValue) {	// double[](double[], double)
-        var retVal = new Array(doubs.length);
-        retVal.fill(0);
+        var retVal = newArray([doubs.length], 0);
         for (var i=0; i<doubs.length; i++) {
             retVal[i] = Math.max(doubs[i], maxValue);
         }
@@ -352,8 +345,7 @@ var ArrayUtils = {
      * @return
      */
     maxBetween: function(arr1, arr2) {	// int[](int[], int[])
-        var retVal = new Array(arr1.length);
-        retVal.fill(0);
+        var retVal = newArray([arr1.length], 0);
         for (var i=0; i<arr1.length; i++) {
             retVal[i] = Math.max(arr1[i], arr2[i]);
         }
@@ -370,8 +362,7 @@ var ArrayUtils = {
      * @return
      */
     minBetween: function(arr1, arr2) {	// int[](int[], int[])
-        var retVal = new Array(arr1.length);
-        retVal.fill(0);
+        var retVal = newArray([arr1.length], 0);
         for (var i=0; i<arr1.length; i++) {
             retVal[i] = Math.min(arr1[i], arr2[i]);
         }
@@ -419,8 +410,7 @@ var ArrayUtils = {
 	        if (dividend.length !== divisor.length) {
 	            throw new Error("The dividend array and the divisor array must be the same length");
 	        }
-	        var quotient = new Array(dividend.length);
-	        quotient.fill(0);
+	        var quotient = newArray([dividend.length], 0);
 	        var denom = 1;
 	        for (var i=0; i<dividend.length; i++) {
 	            quotient[i] = (dividend[i] + dividendAdjustment) /
@@ -446,8 +436,7 @@ var ArrayUtils = {
 	        if (dividend.length !== divisor.length) {
 	            throw new Error("The dividend array and the divisor array must be the same length");
 	        }
-	        var quotient = new Array(dividend.length);
-	        quotient.fill(0);
+	        var quotient = newArray([dividend.length], 0);
 	        var denom = 1;
 	        for (var i=0; i<dividend.length; i++) {
 	            quotient[i] = (dividend[i]) /
@@ -469,8 +458,7 @@ var ArrayUtils = {
 	     * @throws IllegalArgumentException if the two argument arrays are not the same length
 	     */
 	    var divideByScalar = function(dividend, divisor) {	// double[](double[], double)
-	        var quotient = new Array(dividend.length);
-	        quotient.fill(0);
+	        var quotient = newArray([dividend.length], 0);
 	        var denom = 1;
 	        for (var i=0; i<dividend.length; i++) {
 	            quotient[i] = (dividend[i]) /
@@ -506,8 +494,7 @@ var ArrayUtils = {
         if (dividend.length !== divisor.length) {
             throw new Error("The dividend array and the divisor array must be the same length");
         }
-        var quotient = new Array(dividend.length);
-        quotient.fill(0);
+        var quotient = newArray([dividend.length], 0);
         for (var i=0; i<dividend.length; i++) {
             quotient[i] = (dividend[i]) / (divisor[i] === 0 ? 1 : divisor[i]); //Protect against division by 0
             quotient[i] = Math.round(quotient[i]);
@@ -534,8 +521,7 @@ var ArrayUtils = {
 	        if (multiplicand.length !== factor.length) {
 	            throw new Error("The multiplicand array and the factor array must be the same length");
 	        }
-	        var product = new Array(multiplicand.length);
-	        product.fill(0);
+	        var product = newArray([multiplicand.length], 0);
 	        for (var i=0; i<multiplicand.length; i++) {
 	            product[i] = (multiplicand[i] + multiplicandAdjustment) * (factor[i] + factorAdjustment);
 	        }
@@ -558,8 +544,7 @@ var ArrayUtils = {
 		    if (multiplicand.length !== factor.length) {
 		        throw new Error("The multiplicand array and the factor array must be the same length");
 		    }
-		    var product = new Array(multiplicand.length);
-		    product.fill(0);
+		    var product = newArray([multiplicand.length]);
 		    for (var i=0; i<multiplicand.length; i++) {
 		        product[i] = (multiplicand[i]) * (factor[i]);
 		    }
@@ -575,8 +560,7 @@ var ArrayUtils = {
 	     * @return
 	     */
 	    var multiplyByScalar = function(multiplicand, factor) {	// int[](int[], intd)
-	        var product = new Array(multiplicand.length);
-	        product.fill(0);
+	        var product = newArray([multiplicand.length], 0);
 	        for (var i=0; i<multiplicand.length; i++) {
 	            product[i] = multiplicand[i] * factor;
 	        }
@@ -605,8 +589,7 @@ var ArrayUtils = {
 	     * @return
 	     */
 	    var subtractVector = function(subtrahend, minuend) {	// int[](int[], int[])
-	        var retVal = new Array(minuend.length);
-	        retVal.fill(0);
+	        var retVal = newArray([minuend.length], 0);
 	        for (var i=0; i<subtrahend.length; i++) {
 	            retVal[i] = subtrahend[i] - minuend[i];
 	        }
@@ -1126,8 +1109,7 @@ var ArrayUtils = {
             places.set(key, j);
         }
 
-        var retVal = new Array(n);
-        retVal.fill(0);
+        var retVal = newArray([n], 0);
         for (i=0; i<n; i++) {
 			if (places.has(array[i])) {	// prevents "undefined" in case the *original* array[0] is called upon
 				retVal[i] = places.get(array[i]);
@@ -1304,8 +1286,7 @@ var ArrayUtils = {
      * @return
      */
     sub: function(source, indexes) {	// int[](int[], int[]) or int[][](int[][], int[])
-        var retVal = new Array(indexes.length);
-        retVal.fill(0);
+        var retVal = newArray([indexes.length], 0);
         for (var i=0; i<indexes.length; i++) {
             retVal[i] = source[indexes[i]];
         }
@@ -1335,8 +1316,7 @@ var ArrayUtils = {
      * @return
      */
     reverse: function(d) {	// int[](int[])
-        var ret = new Array(d.length);
-        ret.fill(0);
+        var ret = newArray([d.length], 0);
         for (var i=0, j=d.length-1; j>=0; i++, j--) {
             ret[i] = d[j];
         }
@@ -1352,8 +1332,7 @@ var ArrayUtils = {
      * @return
      */
     or: function(arg1, arg2) {	// int[](int[], int[])
-        var retVal = new Array(Math.max(arg1.length, arg2.length));
-        retVal.fill(0);
+        var retVal = newArray([Math.max(arg1.length, arg2.length)], 0);
         for (var i=0; i<arg1.length; i++) {
             retVal[i] = arg1[i] > 0 || arg2[i] > 0 ? 1 : 0;
         }
@@ -1369,8 +1348,7 @@ var ArrayUtils = {
      * @return
      */
     and: function(arg1, arg2) {	// int[](int[], int[])
-        var retVal = new Array(Math.max(arg1.length, arg2.length));
-        retVal.fill(0);
+        var retVal = newArray([Math.max(arg1.length, arg2.length)], 0);
         for (var i=0; i<arg1.length; i++) {
             retVal[i] = arg1[i] > 0 && arg2[i] > 0 ? 1 : 0;
         }
@@ -1497,8 +1475,7 @@ var ArrayUtils = {
  * Helper Class for recursive coordinate assembling
  */
 var CoordinateAssembler = function(dimensions) {
-    this.position = new Array(dimensions.length);
-    this.position.fill(0);
+    this.position = newArray([dimensions.length], 0);
     this.dimensions = dimensions;
     this.result = [];
 };

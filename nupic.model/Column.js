@@ -20,8 +20,7 @@ var Column = function(numCells, index) {
     /** Configuration of cell count */
 	this.numCells = numCells;	// int
 	
-	this.cells = new Array(numCells);	// Cell[]
-	this.cells.fill(null);
+	this.cells = newArray([numCells], null);	// Cell[]
 	for (var i=0; i<numCells; i++) {
 		this.cells[i] = new Cell(this, i);
 	}

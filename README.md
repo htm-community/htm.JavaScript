@@ -1,6 +1,9 @@
 # htm.JavaScript
 This is a port of the [numenta/nupic](https://github.com/numenta/nupic) port [htm.java](https://github.com/numenta/htm.java) to JavaScript.
 
+##Disclaimer
+This project is work in progress and subject to frequent changes.
+
 ## Goal
 Run NuPIC in a browser (For now Firefox only due to extensive use of the ECMAScript 6 data structures Set and Map)
 

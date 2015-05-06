@@ -15,17 +15,8 @@ var SparseBinaryMatrix = function(dimensions, useColumnMajorOrdering) {
 		cols = dimensions[1];
 	}	
 	
-	this.backingArray = (function (arg1, arg2) {
-		var arr = [];
-		for (var i=0; i<arg1; i++) {
-			arr[i] = new Array(arg2);
-			arr[i].fill(0);
-		}
-		return arr;
-	})(rows, cols);
-	
-    this.trueCounts = new Array(dimensions[0]);
-    this.trueCounts.fill(0);
+	this.backingArray = newArray([rows, cols], 0);
+    this.trueCounts = newArray([dimensions[0]], 0);
 };
 
 SparseBinaryMatrix.prototype = Object.create(SparseMatrix.prototype);
@@ -274,8 +265,7 @@ SparseBinaryMatrix.prototype.or = function() {
 	 */
 	var orByMatrix = function(inputMatrix) {	// SparseBinaryMatrix(SparseBinaryMatrix)
 	    var mask = inputMatrix.getSparseIndices();
-	    var ones = new Array(mask.length);
-	    ones.fill(1);
+	    var ones = newArray([mask.length], 1);
 	    return that.set(mask, ones);
 	};
 	
@@ -288,8 +278,7 @@ SparseBinaryMatrix.prototype.or = function() {
 	 * @return  this matrix
 	 */
 	var orByVector = function(onBitIndexes) {	// SparseBinaryMatrix(TIntCollection) or SparseBinaryMatrix(int[])
-	    var ones = new Array(onBitIndexes.length);
-	    ones.fill(1);
+	    var ones = newArray([onBitIndexes.length], 1);
 	    return that.set(onBitIndexes, ones);
 	}
 	

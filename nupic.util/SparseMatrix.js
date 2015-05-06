@@ -67,8 +67,7 @@ SparseMatrix.prototype = {
      */
     get1DIndexes: function() {	// int[](void)
         // Alternative begin (To change remove/add "//")
-        //var results = new Array(this.getMaxIndex() + 1);
-        //results.fill(0);
+        //var results = newArray([this.getMaxIndex() + 1], 0);
     	var results = [];
         // Alternative end
         this.visit(this.dimensions, 0, new Array(this.numDimensions), results);
@@ -163,8 +162,7 @@ SparseMatrix.prototype = {
      * @return
      */
     reverse: function(input) {	// int[](int[])
-        var retVal = new Array(input.length);
-        retVal.fill(0);
+        var retVal = newArray([input.length], 0);
         for (var i=input.length-1, j=0; i>=0; i--, j++) {
             retVal[j] = input[i];
         }
@@ -181,8 +179,7 @@ SparseMatrix.prototype = {
 	initDimensionMultiples: function(dimensions) {	// int[](int[])
 		var holder = 1;
 		var len = dimensions.length;
-		var dimensionMultiples = new Array(this.numDimensions);
-		dimensionMultiples.fill(0);
+		var dimensionMultiples = newArray([this.numDimensions], 0);
 		for(var i=0 ; i<len; i++) {
 			holder *= (i === 0 ? 1 : dimensions[len-i]);
 			dimensionMultiples[len-1-i] = holder;
@@ -243,8 +240,7 @@ SparseMatrix.prototype = {
      * @return
      */
     computeCoordinates: function(index) {	// int[](int)
-        var returnVal = new Array(this.numDimensions);
-        returnVal.fill(0);
+        var returnVal = newArray([this.numDimensions], 0);
         var base = index;
         for (var i=0; i<this.dimensionMultiples.length; i++) {
             var quotient = Math.floor(base / this.dimensionMultiples[i]);

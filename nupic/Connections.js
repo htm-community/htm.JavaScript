@@ -1136,7 +1136,7 @@ Connections.prototype = {
     	}
 	        
 	    if (isNullOrUndefined(this.receptorSynapses)) {
-	        this.receptorSynapses = new Map();
+	        this.receptorSynapses = new WeakMap();
 	    }
 	        
 	    var retVal = this.receptorSynapses.get(cell);
@@ -1160,7 +1160,7 @@ Connections.prototype = {
 	    }
 	        
 	    if (isNullOrUndefined(this.segments)) {
-	        this.segments = new Map();
+	        this.segments = new WeakMap();
 	    }
 	        
 	    var retVal = this.segments.get(cell);
@@ -1184,7 +1184,7 @@ Connections.prototype = {
 	    }
 	        
 	    if (isNullOrUndefined(this.synapses)) {
-	        this.synapses = new Map();
+	        this.synapses = new WeakMap();
 	    }
 	        
 	    var retVal = this.synapses.get(segment);
