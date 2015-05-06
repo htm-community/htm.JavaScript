@@ -369,8 +369,8 @@ SpatialPooler.prototype = {
      * @return
      */
     avgColumnsPerInput: function(c) {	// double(Connections c)
-        var colDim = c.getColumnDimensions();
-        var inputDim = c.getInputDimensions();
+        var colDim = copyOf(c.getColumnDimensions());
+        var inputDim = copyOf(c.getInputDimensions());
         var columnsPerInput = ArrayUtils.divide(colDim, inputDim, 0, 0);
         return ArrayUtils.average(columnsPerInput);
     },
@@ -839,7 +839,7 @@ SpatialPooler.prototype = {
      * @return
      */
     inhibitColumns: function(c, overlaps) {	// int[](Connections c, double[] overlaps)
-    	//overlaps = Arrays.copyOf(overlaps, overlaps.length);
+    	overlaps = copyOf(overlaps);
     	
     	var density;
     	var inhibitionArea;

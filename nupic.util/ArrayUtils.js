@@ -104,7 +104,7 @@ var ArrayUtils = {
      */
     concat: function(first, second) {	// double[](double[], double[])
 		var flen = first.length, slen = second.length;
-		var retVal = first;
+		var retVal = copyOf(first);
       
         for (var i=flen, j=0; i<flen+slen; i++, j++) {
             retVal[i] = second[j];
@@ -1462,7 +1462,7 @@ var ArrayUtils = {
      * http://stackoverflow.com/a/784842
      */
     concatAll: function(first) {	// int[](int[], int[]...) or T[](T[], T[]...)
-		var result = first;
+		var result = copyOf(first);
 		var i = 1;
 		while (!(arguments[i] === undefined)) {
         	result = result.concat(arguments[i++]);

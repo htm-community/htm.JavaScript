@@ -6,6 +6,19 @@ function isNullOrUndefined(o) {
 }
 
 /*
+ * Deep copies array org to cpy
+ */
+var copyOf = function(org) {
+	var cpy = [];
+	
+	for (var i=0; i<org.length; i++) {
+		cpy[i] = org[i];
+	}
+	
+	return cpy;
+}
+
+/*
  * Compares arbitrary arrays
  */
 function equals(a1, a2) {
