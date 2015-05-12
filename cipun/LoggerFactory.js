@@ -3,18 +3,17 @@
  * might be specialized in the future ...
  */
 var LoggerFactory = {
-	getLogger: function() {
-		return new Logger();
-	}	
+    getLogger: function() {
+        return new Logger();
+    }
 };
 
 var Logger = function() {
-	this.trace = function(arg) {
-		console.log(arg);
-	};
-	
-	this.info = function(arg) {
-		console.log(arg);
-	}
-};
+    this.trace = function(arg) {
+        console.log(arg);
+    };
 
+    this.info = function(arg) {
+        console.log(arg);
+    }
+};

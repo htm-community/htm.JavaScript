@@ -5,8 +5,6 @@
  * @author David Ray
  * @author Ralf Seliger (port to JavaScript)
  */
-var TemporalMemory = function() {
-};
+var TemporalMemory = function() {};
 
-TemporalMemory.prototype = {
-}
+TemporalMemory.prototype = {}

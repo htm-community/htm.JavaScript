@@ -19,7 +19,7 @@
  * @see DistalDendrite
  * @see TemporalMemory.Connections
  */
-var Synapse = function(c, sourceCell, segment, pool, index, inputIndex) {	// Synapse(Connections, Cell, Segment, Pool, int, int) 
+var Synapse = function(c, sourceCell, segment, pool, index, inputIndex) { // Synapse(Connections, Cell, Segment, Pool, int, int) 
     /**
      * Constructs a new {@code Synapse}
      * 
@@ -36,67 +36,68 @@ var Synapse = function(c, sourceCell, segment, pool, index, inputIndex) {	// Syn
     this.synapseIndex = index;
     this.inputIndex = inputIndex;
     this.permanence = 0;
-        
+
     // If this isn't a synapse on a proximal dendrite
-    if(!isNullOrUndefined(sourceCell)) {
-     	sourceCell.addReceptorSynapse(c, this);
+    if (!isNullOrUndefined(sourceCell)) {
+        sourceCell.addReceptorSynapse(c, this);
     }
 };
-    
-Synapse.prototype = {    /**
+
+Synapse.prototype = {
+    /**
      * Returns this {@code Synapse}'s index.
      * @return
      */
-    getIndex: function() {	// int(void)
-    	return this.synapseIndex;
+    getIndex: function() { // int(void)
+        return this.synapseIndex;
     },
-    
+
     /**
      * Returns the index of this {@code Synapse}'s input item
      * whether it is a "sourceCell" or inputVector bit.
      * @return
      */
-    getInputIndex: function() {	// int(void)
-    	return this.inputIndex;
+    getInputIndex: function() { // int(void)
+        return this.inputIndex;
     },
-    
+
     /**
      * Returns this {@code Synapse}'s degree of connectedness.
      * @return
      */
-    getPermanence: function() {	// double(void)
+    getPermanence: function() { // double(void)
         return this.permanence;
     },
-    
+
     /**
      * Sets this {@code Synapse}'s degree of connectedness.
      * @param perm
      */
-    setPermanence: function(c, perm) {	// void(Connections, double)
+    setPermanence: function(c, perm) { // void(Connections, double)
         this.permanence = perm;
         this.pool.updatePool(c, this, perm);
     },
-    
+
     /**
      * Returns the owning dendritic segment
      * @return
      */
-    getSegment: function() {	// Segment(void)
+    getSegment: function() { // Segment(void)
         return this.segment;
     },
-    
+
     /**
      * Returns the containing {@link Cell} 
      * @return
      */
-    getSourceCell: function() {	// Cell(void)
+    getSourceCell: function() { // Cell(void)
         return this.sourceCell;
     },
-    
+
     /**
      * {@inheritDoc}
      */
-    toString: function() {	// String(void)
+    toString: function() { // String(void)
         return "" + this.synapseIndex;
     }
 }

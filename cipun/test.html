@@ -1,61 +1,59 @@
 <script src="./util.js"></script>
-<script src="../misc/webtoolkit.md5.js"></script> 
+<script src="../misc/webtoolkit.md5.js"></script>
 
 <script>
+    var ar = [1, 2, 3, 4, 5];
+    console.log(ar);
+    ar = ar.slice(1, ar.length);
+    console.log(ar.toString());
 
-var ar = [1,2,3,4,5];
-console.log(ar);
-ar = ar.slice(1, ar.length);
-console.log(ar.toString());
+    console.log("x=" + parseInt(5));
 
-console.log("x=" + parseInt(5));
+    var c = function(n) {
+        this.n = n;
+    };
 
-var c = function(n) {
-	this.n = n;
-};
+    c.prototype.N = function(n) {
+        this.n = n;
+        console.log(n);
+    }
 
-c.prototype.N = function(n) {
-	this.n = n;
-	console.log(n);
-}
+    var c = new c(19);
+    c.N(20);
 
-var c = new c(19);
-c.N(20);
+    var x = 10;
 
-var x = 10;
+    var s = "wert=";
 
-var s = "wert=";
+    console.log(s + x);
 
-console.log(s+x);
+    var encoder = function(x) {
+        this.x = x;
+    };
 
-var encoder = function(x) {
-	this.x = x;
-};
+    encoder.prototype = {
+        encode: function() {
+            console.log("encoder::encode");
+            scalarEncoder.prototype.encodeIntoArray.call(this, 30);
+            // compare to:
+            scalarEncoder.prototype.encodeIntoArray(30);
+        }
+    };
 
-encoder.prototype = {
-	encode: function() {
-		console.log("encoder::encode");
-		scalarEncoder.prototype.encodeIntoArray.call(this, 30);
-		// compare to:
-		scalarEncoder.prototype.encodeIntoArray(30);
-	}
-};
+    var scalarEncoder = function() {
+        encoder.call(this, 20);
+    };
 
-var scalarEncoder = function() {
-	encoder.call(this, 20);
-};
+    scalarEncoder.prototype = Object.create(encoder.prototype);
+    scalarEncoder.prototype.constructor = scalarEncoder;
 
-scalarEncoder.prototype = Object.create(encoder.prototype);
-scalarEncoder.prototype.constructor = scalarEncoder;
+    scalarEncoder.prototype.encodeIntoArray = function(y) {
+        console.log("scalarEncoder::encodeIntoArray");
+        console.log(this.x);
+        console.log(y);
+    };
 
-scalarEncoder.prototype.encodeIntoArray = function(y) {
-	console.log("scalarEncoder::encodeIntoArray");
-	console.log(this.x);
-	console.log(y);
-};
+    var se = new scalarEncoder();
 
-var se = new scalarEncoder();
-
-se.encode();
-
+    se.encode();
 </script>

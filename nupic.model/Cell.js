@@ -16,24 +16,24 @@ var Cell = function(column, index) {
     /** This cell's index */
     this.index = column.getIndex() * column.getNumCellsPerColumn() + index;
 };
-    
+
 Cell.prototype = {
-	/**
+    /**
      * Returns this {@code Cell}'s index.
      * @return
      */
-    getIndex: function() {		// int(void)
+    getIndex: function() { // int(void)
         return this.index;
     },
-    
+
     /**
      * Returns the column within which this cell resides
      * @return
      */
-    getParentColumn: function() {		// Column(void)
+    getParentColumn: function() { // Column(void)
         return this.parentColumn;
     },
-    
+
     /**
      * Adds a {@link Synapse} which is the receiver of signals
      * from this {@code Cell}
@@ -41,10 +41,10 @@ Cell.prototype = {
      * @param c     the connections state of the temporal memory
      * @param s
      */
-    addReceptorSynapse: function(c, s) {		// void(Connections, Synapse)
+    addReceptorSynapse: function(c, s) { // void(Connections, Synapse)
         c.getReceptorSynapses(this).add(s);
     },
-    
+
     /**
      * Returns the Set of {@link Synapse}s which have this cell
      * as their source cells.
@@ -53,10 +53,10 @@ Cell.prototype = {
      * @return  the Set of {@link Synapse}s which have this cell
      *          as their source cells.
      */
-    getReceptorSynapses: function(c) {		// Set<Synapse>(Connections)
+    getReceptorSynapses: function(c) { // Set<Synapse>(Connections)
         return c.getReceptorSynapses(this);
     },
-    
+
     /**
      * Returns a newly created {@link DistalDendrite}
      * 
@@ -64,27 +64,27 @@ Cell.prototype = {
      * @param index     the index of the new {@link DistalDendrite}
      * @return           a newly created {@link DistalDendrite}
      */
-    createSegment: function(c, index) {		// DistalDendrite(Connections, int)
+    createSegment: function(c, index) { // DistalDendrite(Connections, int)
         var dd = new DistalDendrite(this, index);
         c.getSegments(this).push(dd);
-        
+
         return dd;
     },
-    
+
     /**
      * Returns a {@link List} of this {@code Cell}'s {@link DistalDendrite}s
      * 
      * @param   c   the connections state of the temporal memory
      * @return  a {@link List} of this {@code Cell}'s {@link DistalDendrite}s
      */
-    getSegments: function(c) {		// List<DistalDendrite>(Connections)
+    getSegments: function(c) { // List<DistalDendrite>(Connections)
         return c.getSegments(this);
     },
-    
+
     /**
      * {@inheritDoc}
      */
-    toString: function() {		// String(void)
+    toString: function() { // String(void)
         return "Cell: col=" + this.parentColumn.getIndex() + ", idx=" + index;
     },
 
@@ -93,13 +93,13 @@ Cell.prototype = {
      * 
      * <em> Note: All comparisons use the cell's index only </em>
      */
-    compareTo: function(arg0) {		// int(Cell)
-    	// this.index > arg0.getIndex() ? +1 : this.index < arg0.getIndex() ? -1 : 0;
-    	if (this.index > arg0.getIndex()) {
-    		return 1;    		
-    	} else if (this.index < arg0.getIndex()) {
-    		return -1;
-    	}
+    compareTo: function(arg0) { // int(Cell)
+        // this.index > arg0.getIndex() ? +1 : this.index < arg0.getIndex() ? -1 : 0;
+        if (this.index > arg0.getIndex()) {
+            return 1;
+        } else if (this.index < arg0.getIndex()) {
+            return -1;
+        }
         return 0;
     }
 }

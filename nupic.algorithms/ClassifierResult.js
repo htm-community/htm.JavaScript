@@ -27,8 +27,6 @@
  * @author Ralf Seliger (port to JavaScript)
  * @see BitHistory
  */
-var ClassifierResult = function() {
-};
+var ClassifierResult = function() {};
 
-ClassifierResult.prototype = {
-}
+ClassifierResult.prototype = {}

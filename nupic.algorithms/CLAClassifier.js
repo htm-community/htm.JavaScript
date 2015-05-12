@@ -7,8 +7,6 @@
  *
  * @param <T>
  */
-var CLAClassifier = function() {
-};
+var CLAClassifier = function() {};
 
-CLAClassifier.prototype = {
-}
+CLAClassifier.prototype = {}

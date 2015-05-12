@@ -5,8 +5,6 @@
  * @author David Ray
  * @author Ralf Seliger (port to JavaScript)
  */
-var MinMax = function() {
-};
+var MinMax = function() {};
 
-MinMax.prototype = {
-}
+MinMax.prototype = {}

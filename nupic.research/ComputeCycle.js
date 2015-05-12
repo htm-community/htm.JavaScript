@@ -8,8 +8,6 @@
  * @author David Ray
  * @author Ralf Seliger (port to JavaScript) 
  */
-var ComputeCycle = function() {
-};
+var ComputeCycle = function() {};
 
-ComputeCycle.prototype = {
-}
+ComputeCycle.prototype = {}
