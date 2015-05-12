@@ -202,7 +202,7 @@ var ArrayUtils = {
 	        var tuples = [];
 	        var len = Math.min(arg1.length, arg2.length);
 	        for (var i=0; i<len; i++) {
-	            tuples.push([arg1[i], arg2[i]]);
+	            tuples.push(new Tuple(arg1[i], arg2[i]));
 	        }
 	
 	        return tuples;
@@ -217,22 +217,20 @@ var ArrayUtils = {
 	     * @param arg2 the first list to be the one'th entry in the returned tuple
 	     * @return a list of tuples
 	     */
-	    var zip1 = function(args) {	// List<Tuple>(Object[]...)
+	    var zip1 = function() {	// List<Tuple>(Object[]...)
 	        var tuples = [];
-	        var len = args.length;
+	        var len = arguments.length;
 	        for (var i=0; i<len; i++) {
-	            tuples.push(args[i]);
+	            tuples.push(new Tuple(arguments[i]));
 	        }
 	
 	        return tuples;
 	    };
 	    
-	    if (arguments.length === 1) {	    	
-	    	return zip1(arguments[0]);	    	
-	    } else if (arguments.length === 2) {	    	
-	    	return zip2(arguments[0], arguments[1]);	    
-	    } else {
-	    	throw new Error("No method found for this call to zip.");
+	    if (arguments.length === 2) {	    	
+	    	return zip2(arguments[0], arguments[1]);
+		} else {
+	    	return zip1(arguments);	    	
 	    }
     },
 
@@ -1461,11 +1459,22 @@ var ArrayUtils = {
      *
      * http://stackoverflow.com/a/784842
      */
-    concatAll: function(first) {	// int[](int[], int[]...) or T[](T[], T[]...)
+    /*
+	// no explicit parameter rest
+	concatAll: function(first) {	// int[](int[], int[]...) or T[](T[], T[]...)
 		var result = copyOf(first);
 		var i = 1;
 		while (!(arguments[i] === undefined)) {
         	result = result.concat(arguments[i++]);
+        }       
+        return result;
+    }*/
+	
+	// rest must be an array
+    concatAll: function(first, rest) {	// int[](int[], int[]...) or T[](T[], T[]...)
+		var result = copyOf(first);
+		for (var i=0; i<rest.length; i++) {
+        	result = result.concat(rest[i]);
         }       
         return result;
     }

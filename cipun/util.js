@@ -1,8 +1,15 @@
 function isNullOrUndefined(o) {
-	if (o === null || o === undefined) {
+	if (o === null || o === undefined || typeof o === undefined) {
 		return true;
 	}
 	return false;
+}
+
+/*
+ * Replace characters from position index in str by s
+ */
+function replaceAt(str, index, s) {
+    return str.substr(0, index) + s + str.substr(index + s.length);
 }
 
 /*
@@ -39,8 +46,18 @@ function equals(a1, a2) {
 			 	return false;
 			 }
 		} else {
-			if (a1[i] !== a2[i]) {
-				return false;
+			if (typeof a1[i] === "number" || typeof a1[i] === "string") {
+				if (a1[i] !== a2[i]) {
+					return false;
+				}
+			} else if (typeof a1[i] === "object") {
+				for (var key in a1[i]) {
+					if (a1[i][key] !== a2[i][key]) {
+						return false;
+					}
+				}
+			} else {
+				throw new Error("Cannot compare a1[i] and a2[i].");
 			}
 		}
 	}

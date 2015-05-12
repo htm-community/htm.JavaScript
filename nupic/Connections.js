@@ -1136,7 +1136,7 @@ Connections.prototype = {
     	}
 	        
 	    if (isNullOrUndefined(this.receptorSynapses)) {
-	        this.receptorSynapses = new WeakMap();
+	        this.receptorSynapses = new Map(); //new WeakMap();
 	    }
 	        
 	    var retVal = this.receptorSynapses.get(cell);
@@ -1160,7 +1160,7 @@ Connections.prototype = {
 	    }
 	        
 	    if (isNullOrUndefined(this.segments)) {
-	        this.segments = new WeakMap();
+	        this.segments = new Map(); //new WeakMap();
 	    }
 	        
 	    var retVal = this.segments.get(cell);
@@ -1180,11 +1180,11 @@ Connections.prototype = {
 	 */
 	getSynapses: function(segment) {	// List<Synapse>(DistalDendrite)
 	    if(isNullOrUndefined(segment)) {
-	        throw new Error("Illegal Argument: Segment was null, undefined or empty.");
+	        throw new Error("Illegal Argument: Segment was null or undefined.");
 	    }
 	        
 	    if (isNullOrUndefined(this.synapses)) {
-	        this.synapses = new WeakMap();
+	        this.synapses = new Map(); //new WeakMap();
 	    }
 	        
 	    var retVal = this.synapses.get(segment);
@@ -1194,32 +1194,7 @@ Connections.prototype = {
 	    }
 	        
 	    return retVal;
-	 },
-	    
-	    /**
-	     * Returns the mapping of {@link ProximalDendrite}s to their {@link Synapse}s.
-	     * 
-	     * @param segment   the {@link ProximalDendrite} used as a key.
-	     * @return          the mapping of {@link ProximalDendrite}s to their {@link Synapse}s.
-	     */
-	    /*
-	 	public List<Synapse> getSynapses(ProximalDendrite segment) {	// List<Synapse>(ProximalDendrite)
-	    	if(segment == null) {
-	            throw new IllegalArgumentException("Segment was null");
-	        }
-	    	
-	    	if(synapses == null) {
-	            synapses = new LinkedHashMap<Segment, List<Synapse>>();
-	        }
-	        
-	        List<Synapse> retVal = null;
-	        if((retVal = synapses.get(segment)) == null) {
-	            synapses.put(segment, retVal = new ArrayList<Synapse>());
-	        }
-	        
-	        return retVal;
-	    }
-	    */
+	},
 	    
 	/**
 	 * Returns the column at the specified index.

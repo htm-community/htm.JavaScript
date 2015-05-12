@@ -391,97 +391,111 @@ Encoder.prototype = {
      * @param offset	the offset of the encoded output the specified encoder
      * 					was used to encode.
      */
-    public void addEncoder(Encoder<T> parent, String name, Encoder<T> child, int offset) {	// void(Encoder<T>, String, Encoder<T>, int)
-    	if(encoders == null) {
-    		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
+    addEncoder: function(parent, name, child, offset) {	// void(Encoder<T>, String, Encoder<T>, int)
+    	if (isNullOrUndefined(this.encoders)) {
+    		this.encoders = new Map(); //new WeakMap();
     	}
 
-    	EncoderTuple key = getEncoderTuple(parent);
+    	var key = this.getEncoderTuple(parent);
     	// Insert a new Tuple for the parent if not yet added.
-    	if(key == null) {
-    	    encoders.put(key = new EncoderTuple("", this, 0), new ArrayList<EncoderTuple>());
+    	if (isNullOrUndefined(key)) {
+			key = new EncoderTuple("", this, 0);
+    	    this.encoders.set(key, []);
     	}
     	
-    	List<EncoderTuple> childEncoders = null;
-    	if((childEncoders = encoders.get(key)) == null) {
-    		encoders.put(key, childEncoders = new ArrayList<EncoderTuple>());
+    	var childEncoders = this.encoders.get(key);
+    	if (isNullOrUndefined(childEncoders)) {
+			childEncoders = [];
+    		this.encoders.set(key, childEncoders);
     	}
-    	childEncoders.add(new EncoderTuple(name, child, offset));
-    }
+    	childEncoders.push(new EncoderTuple(name, child, offset));
+    },
 
     /**
      * Returns the {@link Tuple} containing the specified {@link Encoder}
      * @param e		the Encoder the return value should contain
      * @return		the {@link Tuple} containing the specified {@link Encoder}
      */
-    public EncoderTuple getEncoderTuple(Encoder<T> e) {
-    	if(encoders == null) {
-    		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
+    getEncoderTuple: function(e) {	// EncoderTuple(Encoder<T>)
+    	if (isNullOrUndefined(this.encoders)) {
+    		this.encoders = new Map(); //new WeakMap();
     	}
 
-    	for(EncoderTuple tuple : encoders.keySet()) {
-    		if(tuple.getEncoder().equals(e)) {
+    	for (var tuple in this.encoders.keys()) {
+    		if (tuple.getEncoder().equals(e)) {
     			return tuple;
     		}
     	}
     	return null;
-    }
+    },
 
-    /**
-     * Returns the list of child {@link Encoder} {@link Tuple}s
-     * corresponding to the specified {@code Encoder}
-     *
-     * @param e		the parent {@link Encoder} whose child Encoder Tuples are being returned
-     * @return		the list of child {@link Encoder} {@link Tuple}s
-     */
-    public List<EncoderTuple> getEncoders(Encoder<T> e) {
-    	return getEncoders().get(getEncoderTuple(e));
-    }
+	getEncoders: function() {
+	
+		var that = this;
+		
+		/**
+		 * Returns the list of child {@link Encoder} {@link Tuple}s
+		 * corresponding to the specified {@code Encoder}
+		 *
+		 * @param e		the parent {@link Encoder} whose child Encoder Tuples are being returned
+		 * @return		the list of child {@link Encoder} {@link Tuple}s
+		 */
+		var getEncodersFromEncoder = function(e) {	// List<EncoderTuple>(Encoder<T>)
+			return that.getEncoders().get(that.getEncoderTuple(e));
+		};
 
-    /**
-     * Returns the list of {@link Encoder}s
-     * @return
-     */
-    public Map<EncoderTuple, List<EncoderTuple>> getEncoders() {
-    	if(encoders == null) {
-    		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
-    	}
-    	return encoders;
-    }
+		/**
+		 * Returns the list of {@link Encoder}s
+		 * @return
+		 */
+		var getEncodersFromVoid = function() {	// Map<EncoderTuple, List<EncoderTuple>>(void)
+			if (isNullOrUndefined(that.encoders)) {
+				that.encoders = new Map(); // new WeakMap();
+			}
+			return that.encoders;
+		};
+	
+		if (arguments.length === 1) {
+			return getEncodersFromEncoder(arguments[0]);
+		} else {
+			return getEncodersFromVoid();
+		}
+	},
 
     /**
      * Sets the encoder flag indicating whether learning is enabled.
      *
      * @param	encLearningEnabled	true if learning is enabled, false if not
      */
-    public void setLearningEnabled(boolean encLearningEnabled) {
+    setLearningEnabled: function(encLearningEnabled) {	// void(boolean)
     	this.encLearningEnabled = encLearningEnabled;
-    }
+    },
 
     /**
      * Returns a flag indicating whether encoder learning is enabled.
      */
-    public boolean isEncoderLearningEnabled() {
-    	return encLearningEnabled;
-    }
+    isEncoderLearningEnabled: function() {	// boolean(void)
+    	return this.encLearningEnabled;
+    },
 
     /**
      * Returns the list of all field types of the specified {@link Encoder}.
      *
      * @return	List<FieldMetaType>
      */
-    public List<FieldMetaType> getFlattenedFieldTypeList(Encoder<T> e) {
-    	if(decoderFieldTypes == null) {
-    		decoderFieldTypes = new HashMap<Tuple, List<FieldMetaType>>();
+    getFlattenedFieldTypeList: function(e) {	// List<FieldMetaType>(Encoder<T>)
+    	if (isNullOrUndefined(this.decoderFieldTypes)) {
+    		this.decoderFieldTypes = new Map();	// new WeakMap();
     	}
 
-    	Tuple key = getEncoderTuple(e);
-    	List<FieldMetaType> fieldTypes = null;
-    	if((fieldTypes = decoderFieldTypes.get(key)) == null) {
-    		decoderFieldTypes.put(key, fieldTypes = new ArrayList<FieldMetaType>());
+    	var key = this.getEncoderTuple(e);
+    	var fieldTypes = this.decoderFieldTypes.get(key);
+    	if ((isNullOrUndefined(fieldTypes)) {
+			fieldTypes = [];
+    		this.decoderFieldTypes.set(key, fieldTypes);
     	}
     	return fieldTypes;
-    }
+    },
 
     /**
      * Returns the list of all field types of a parent {@link Encoder} and all
@@ -490,48 +504,52 @@ Encoder.prototype = {
      *
      * @return	List<FieldMetaType>
      */
-    public List<FieldMetaType> getFlattenedFieldTypeList() {
-    	return flattenedFieldTypeList;
-    }
+    getFlattenedFieldTypeList: function() {	// List<FieldMetaType>(void)
+    	return this.flattenedFieldTypeList;
+    },
 
     /**
      * Sets the list of flattened {@link FieldMetaType}s
      *
      * @param l		list of {@link FieldMetaType}s
      */
-    public void setFlattenedFieldTypeList(List<FieldMetaType> l) {
+    setFlattenedFieldTypeList: function(l) {	// void(List<FieldMetaType>)
     	this.flattenedFieldTypeList = l;
-    }
+    },
 
     /**
      * Returns the names of the fields
      *
      * @return	the list of names
      */
-    public List<String> getScalarNames() {
-    	return scalarNames;
-    }
+    getScalarNames: function() {	// List<String>(void)
+    	return this.scalarNames;
+    },
 
     /**
      * Sets the names of the fields
      *
      * @param names	the list of names
      */
-    public void setScalarNames(List<String> names) {
+    setScalarNames: function(names) {	// void(List<String>)
     	this.scalarNames = names;
-    }
-    ///////////////////////////////////////////////////////////
+    },
 
+    ///////////////////////////////////////////////////////////
 
 	/**
 	 * Should return the output width, in bits.
 	 */
-	public abstract int getWidth();
+	getWidth: function() {	// int(void)
+		throw new Error("getWidth must be overloaded.");
+	},
 
 	/**
 	 * Returns true if the underlying encoder works on deltas
 	 */
-	public abstract boolean isDelta();
+	isDelta: function() {	// boolean(void)
+		throw new Error("isDelta must be overloaded.");
+	},
 
 	/**
 	 * Encodes inputData and puts the encoded value into the output array,
@@ -543,15 +561,17 @@ Encoder.prototype = {
      *
 	 * @return
 	 */
-	public abstract void encodeIntoArray(T inputData, int[] output);
+	encodeIntoArray: function(inputData, output) {	// void(T, output)
+		throw new Error("encodeIntoArray must be overloaded.");
+	},
 
 	/**
 	 * Set whether learning is enabled.
 	 * @param 	learningEnabled		flag indicating whether learning is enabled
 	 */
-    public void setLearning(boolean learningEnabled) {
-        setLearningEnabled(learningEnabled);
-    }
+    setLearning: function(learningEnabled) {	// void(boolean)
+        this.setLearningEnabled(learningEnabled);
+    },
 
 	/**
 	 * This method is called by the model to set the statistics like min and
@@ -562,7 +582,9 @@ Encoder.prototype = {
      *     							the fieldName and the second index the statistic ie:
      *     							fieldStatistics['pounds']['min']
 	 */
-	public void setFieldStats(String fieldName, Map<String, Double> fieldStatistics) {}
+	setFieldStats: function(fieldName, fieldStatistics) {	// void(String, Map<String, Double>)
+		throw new Error("setFieldStats must be overloaded.");
+	}, 
 
 	/**
 	 * Convenience wrapper for {@link #encodeIntoArray(double, int[])}
@@ -570,11 +592,11 @@ Encoder.prototype = {
 	 *
      * @return	an array with the encoded representation of inputData
 	 */
-	public int[] encode(T inputData) {
-		int[] output = new int[getN()];
-		encodeIntoArray(inputData, output);
+	encode: function(inputData) {	// int[](T)
+		var output = newArray(this.getN(), 0);
+		this.encodeIntoArray(inputData, output);
 		return output;
-	}
+	},
 
 	/**
 	 * Return the field names for each of the scalar values returned by
@@ -585,31 +607,32 @@ Encoder.prototype = {
      *
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public List<String> getScalarNames(String parentFieldName) {
-		List<String> names = new ArrayList<String>();
-		if(getEncoders() != null) {
-			List<EncoderTuple> encoders = getEncoders(this);
-			for(Tuple tuple : encoders) {
-				List<String> subNames = ((Encoder<T>)tuple.get(1)).getScalarNames(getName());
-				List<String> hierarchicalNames = new ArrayList<String>();
-				if(parentFieldName != null) {
-					for(String name : subNames) {
-						hierarchicalNames.add(String.format("%s.%s", parentFieldName, name));
+	getScalarNames: function(parentFieldName) {	// List<String>(String)
+		var names = [];
+		if (!isNullOrUndefined(this.getEncoders()) {
+			var encoders = this.getEncoders(this);
+			for (var tuple in encoders) {
+				var subNames = tuple.get(1)).getScalarNames(this.getName());
+				var hierarchicalNames = [];
+				if (!isNullOrUndefined(parentFieldName)) {
+					for (var name in subNames) {
+						hierarchicalNames.push(parentFieldName + "." + name));
 					}
 				}
-				names.addAll(hierarchicalNames);
+				for (var name in hierarchicalNames) {
+					names.push(name);
+				}
 			}
-		}else{
-			if(parentFieldName != null) {
-				names.add(parentFieldName);
-			}else{
-				names.add((String)getEncoderTuple(this).get(0));
+		} else {
+			if (!isNullOrUndefined(parentFieldName)) {
+				names.push(parentFieldName);
+			} else {
+				names.push(this.getEncoderTuple(this).get(0));
 			}
 		}
 
 		return names;
-	}
+	},
 
 	/**
 	 * Returns a sequence of field types corresponding to the elements in the
@@ -617,20 +640,21 @@ Encoder.prototype = {
      *
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public List<FieldMetaType> getDecoderOutputFieldTypes() {
-		if(getFlattenedFieldTypeList() != null) {
-			return getFlattenedFieldTypeList();
+	getDecoderOutputFieldTypes: function() {	// List<FieldMetaType>(void)
+		if (!isNullOrUndefined(this.getFlattenedFieldTypeList()) {
+			return this.getFlattenedFieldTypeList();
 		}
 
-		List<FieldMetaType> retVal = new ArrayList<FieldMetaType>();
-		for(Tuple t : getEncoders(this)) {
-			List<FieldMetaType> subTypes = ((Encoder<T>)t.get(1)).getDecoderOutputFieldTypes();
-			retVal.addAll(subTypes);
+		var retVal = [];
+		for (var t in this.getEncoders(this)) {
+			var subTypes = t.get(1).getDecoderOutputFieldTypes();
+			for (var type in subTypes) {
+				retVal.push(type);
+			}
 		}
-		setFlattenedFieldTypeList(retVal);
+		this.setFlattenedFieldTypeList(retVal);
 		return retVal;
-	}
+	},
 
 	/**
 	 * Gets the value of a given field from the input record
@@ -638,18 +662,17 @@ Encoder.prototype = {
 	 * @param fieldName		the name of the field containing the input object.
 	 * @return
 	 */
-	public Object getInputValue(Object inputObject, String fieldName) {
-		if(Map.class.isAssignableFrom(inputObject.getClass())) {
-			@SuppressWarnings("rawtypes")
-			Map map = (Map)inputObject;
-			if(!map.containsKey(fieldName)) {
-				throw new IllegalArgumentException("Unknown field name " + fieldName +
-					" known fields are: " + map.keySet() + ". ");
+	getInputValue: function(inputObject, fieldName) {	// Object(Object, String)
+		//if(Map.class.isAssignableFrom(inputObject.getClass())) {
+			var map = inputObject;
+			if (!map.has(fieldName)) {
+				throw new Error("Unknown field name " + fieldName +
+					" known fields are: " + map.keys() + ". ");
 			}
 			return map.get(fieldName);
-		}
-		return null;
-	}
+		//}
+		//return null;
+	},
 
 	/**
 	 * Returns a reference to each sub-encoder in this encoder. They are
@@ -658,21 +681,22 @@ Encoder.prototype = {
      *
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public List<Encoder<T>> getEncoderList() {
-		List<Encoder<T>> encoders = new ArrayList<Encoder<T>>();
+	getEncoderList: function() {	// List<Encoder<T>>(void)
+		var encoders = [];
 
-		List<EncoderTuple> registeredList = getEncoders(this);
-		if(registeredList != null && !registeredList.isEmpty()) {
-			for(Tuple t : registeredList) {
-				List<Encoder<T>> subEncoders = ((Encoder<T>)t.get(1)).getEncoderList();
-				encoders.addAll(subEncoders);
+		var registeredList = this.getEncoders(this);
+		if (!isNullOrUndefined(registeredList) && registeredList.length !== 0) {
+			for (var t in registeredList) {
+				var subEncoders = t.get(1)).getEncoderList();
+				for (var subEncoder in subEncoders) {
+					encoders.push(subEncoder);
+				}
 			}
-		}else{
-			encoders.add(this);
+		} else {
+			encoders.push(this);
 		}
 		return encoders;
-	}
+	},
 
 	/**
 	 * Returns an {@link TDoubleList} containing the sub-field scalar value(s) for
@@ -697,18 +721,20 @@ Encoder.prototype = {
      *
 	 * @return
 	 */
-	public <S> TDoubleList getScalars(S d) {
-		TDoubleList retVals = new TDoubleArrayList();
-		double inputData = (Double)d;
-		List<EncoderTuple> encoders = getEncoders(this);
-		if(encoders != null) {
-			for(EncoderTuple t : encoders) {
-				TDoubleList values = t.getEncoder().getScalars(inputData);
-				retVals.addAll(values);
+	getScalars: function(d) {	// <S> TDoubleList(S)
+		var retVals = [];
+		var inputData = d;
+		var encoders = this.getEncoders(this);
+		if (!isNullOrUndefined(encoders)) {
+			for (var t in encoders) {
+				values = t.getEncoder().getScalars(inputData);
+				for (var value in values) {
+					retVals.push(value);
+				}
 			}
 		}
 		return retVals;
-	}
+	},
 
 	/**
 	 * Returns the input in the same format as is returned by topDownCompute().
@@ -726,19 +752,21 @@ Encoder.prototype = {
      *
 	 * @return	list of encoded values in String form
 	 */
-	public <S> List<String> getEncodedValues(S inputData) {
-		List<String> retVals = new ArrayList<String>();
-		Map<EncoderTuple, List<EncoderTuple>> encoders = getEncoders();
-		if(encoders != null && encoders.size() > 0) {
-			for(EncoderTuple t : encoders.keySet()) {
-				retVals.addAll(t.getEncoder().getEncodedValues(inputData));
+	getEncodedValues: function(inputData) {	// <S> List<String>(S)
+		var retVals = [];
+		var encoders = this.getEncoders();
+		if (!isNullOrUndefined(encoders) && encoders.length > 0) {
+			for (var t in encoders.keys()) {
+				for (var v in t.getEncoder().getEncodedValues(inputData)
+					retVals.push(v);
+				}
 			}
-		}else{
-			retVals.add(inputData.toString());
+		} else {
+			retVals.push(inputData);
 		}
 
 		return retVals;
-	}
+	},
 
 	/**
 	 * Returns an array containing the sub-field bucket indices for
@@ -748,41 +776,21 @@ Encoder.prototype = {
 	 *
 	 * @return 	array of bucket indices
 	 */
-	public int[] getBucketIndices(String input) {
-		TIntList l = new TIntArrayList();
-		Map<EncoderTuple, List<EncoderTuple>> encoders = getEncoders();
-		if(encoders != null && encoders.size() > 0) {
-			for(EncoderTuple t : encoders.keySet()) {
-				l.addAll(t.getEncoder().getBucketIndices(input));
+	getBucketIndices: function(input) {	// int[](String) or int[](double)
+		var l = [];
+		var encoders = this.getEncoders();
+		if (!isNullOrUndefined(encoders) && encoders.length > 0) {
+			for (var t in encoders.keys()) {
+				for (var v in t.getEncoder().getBucketIndices(input)) {
+					l.push(v));
+				}
 			}
-		}else{
-			throw new IllegalStateException("Should be implemented in base classes that are not " +
+		} else {
+			throw new Error("Should be implemented in base classes that are not " +
 				"containers for other encoders");
 		}
-		return l.toArray();
-	}
-
-	/**
-	 * Returns an array containing the sub-field bucket indices for
-     * each sub-field of the inputData. To get the associated field names for each of
-     * the buckets, call getScalarNames().
-	 * @param  	input 	The data from the source. This is typically a object with members.
-	 *
-	 * @return 	array of bucket indices
-	 */
-	public int[] getBucketIndices(double input) {
-		TIntList l = new TIntArrayList();
-		Map<EncoderTuple, List<EncoderTuple>> encoders = getEncoders();
-		if(encoders != null && encoders.size() > 0) {
-			for(EncoderTuple t : encoders.keySet()) {
-				l.addAll(t.getEncoder().getBucketIndices(input));
-			}
-		}else{
-			throw new IllegalStateException("Should be implemented in base classes that are not " +
-				"containers for other encoders");
-		}
-		return l.toArray();
-	}
+		return l;
+	},
 
 	/**
 	 * Return a pretty print string representing the return values from
@@ -793,21 +801,21 @@ Encoder.prototype = {
 	 *
 	 * @return string representation of scalar values
 	 */
-	public String scalarsToStr(List<?> scalarValues, List<String> scalarNames) {
-		if(scalarNames == null || scalarNames.isEmpty()) {
-			scalarNames = getScalarNames("");
+	scalarsToStr: function(scalarValues, scalarNames) {	// String(List<?>, List<String>)
+		if (isNullOrUndefined(scalarNames) || scalarNames.length === 0) {
+			scalarNames = this.getScalarNames("");
 		}
 
-		StringBuilder desc = new StringBuilder();
-		for(Tuple t : ArrayUtils.zip(scalarNames, scalarValues)) {
-			if(desc.length() > 0) {
-				desc.append(String.format(", %s:%.2f", t.get(0), t.get(1)));
-			}else{
-				desc.append(String.format("%s:%.2f", t.get(0), t.get(1)));
+		desc = "";
+		for (var t in ArrayUtils.zip(scalarNames, scalarValues)) {
+			if (desc.length > 0) {
+				desc += ", " + t.get(0) + ":" + t.get(1);
+			} else {
+				desc += t.get(0) + ":" + t.get(1);
 			}
 		}
-		return desc.toString();
-	}
+		return desc;
+	},
 
 	/**
 	 * This returns a list of tuples, each containing (name, offset).
@@ -819,9 +827,9 @@ Encoder.prototype = {
      *
 	 * @return		list of tuples, each containing (name, offset)
 	 */
-     public List<Tuple> getDescription() {
-           return description;
-     }
+    getDescription: function() {	// List<Tuple>(void)
+           return this.description;
+    },
 
 
 	/**
@@ -833,89 +841,87 @@ Encoder.prototype = {
 	 *
      * @return tuple(fieldName, offsetWithinField)
 	 */
-	public Tuple encodedBitDescription(int bitOffset, boolean formatted) {
+	encodedBitDescription: function(bitOffset, formatted) {	// Tuple(int, boolean)
 		//Find which field it's in
-		List<Tuple> description = getDescription();
-		int len = description.size();
-		String prevFieldName = null;
-		int prevFieldOffset = -1;
-		int offset = -1;
-		for(int i = 0;i < len;i++) {
-			Tuple t = description.get(i);//(name, offset)
-			if(formatted) {
-				offset = ((int)t.get(1)) + 1;
-				if(bitOffset == offset - 1) {
+		var description = this.getDescription();
+		var len = description.length;
+		var prevFieldName = null;
+		var prevFieldOffset = -1;
+		var offset = -1;
+		for (var i=0; i<len; i++) {
+			var t = description[i];//(name, offset)
+			if (formatted) {
+				offset = t.get(1)) + 1;
+				if (bitOffset === offset - 1) {
 					prevFieldName = "separator";
 					prevFieldOffset = bitOffset;
 				}
 			}
-			if(bitOffset < offset) break;
+			if (bitOffset < offset) {
+				break;
+			}
 		}
 		// Return the field name and offset within the field
 	    // return (fieldName, bitOffset - fieldOffset)
-		int width = formatted ? getDisplayWidth() : getWidth();
+		var width = formatted ? this.getDisplayWidth() : this.getWidth();
 
-		if(prevFieldOffset == -1 || bitOffset > getWidth()) {
-			throw new IllegalStateException("Bit is outside of allowable range: " +
-				String.format("[0 - %d]", width));
+		if (prevFieldOffset === -1 || bitOffset > this.getWidth()) {
+			throw new Error("Bit is outside of allowable range: " +
+				"[0 - " + width + "]");
 		}
 		return new Tuple(prevFieldName, bitOffset - prevFieldOffset);
-	}
+	},
 
 	/**
 	 * Pretty-print a header that labels the sub-fields of the encoded
      * output. This can be used in conjunction with {@link #pprint(int[], String)}.
 	 * @param prefix
 	 */
-	public void pprintHeader(String prefix) {
-		LOGGER.info(prefix == null ? "" : prefix);
+	pprintHeader: function(prefix) {	// void(String)
+		this.LOGGER.info(isNullOrUndefined(prefix) ? "" : prefix);
 
-		List<Tuple> description = getDescription();
-		description.add(new Tuple("end", getWidth()));
+		var description = this.getDescription();
+		description.push(new Tuple("end", this.getWidth()));
 
-		int len = description.size() - 1;
-		for(int i = 0;i < len;i++) {
-			String name = (String)description.get(i).get(0);
-			int width = (int)description.get(i+1).get(1);
+		var len = description.length - 1;
+		for (var i=0; i<len; i++) {
+			var name = description[i].get(0);
+			var width = description[i+1].get(1);
 
-			String formatStr = String.format("%%-%ds |", width);
-			StringBuilder pname = new StringBuilder(name);
-			if(name.length() > width) pname.setLength(width);
+			var pname = name;
 
-            LOGGER.info(String.format(formatStr, pname));
+            this.LOGGER.info(pname);
 		}
 
-		len = getWidth() + (description.size() - 1)*3 - 1;
-		StringBuilder hyphens = new StringBuilder();
-		for(int i = 0;i < len;i++) hyphens.append("-");
-        LOGGER.info(new StringBuilder(prefix).append(hyphens).toString());
-    }
+		len = this.getWidth() + (this.description.length - 1)*3 - 1;
+		var hyphens = "";
+		for (var i=0; i<len; i++) {
+			hyphens += "-";
+		}
+        this.LOGGER.info(hyphens);
+    },
 
     /**
 	 * Pretty-print the encoded output using ascii art.
 	 * @param output
 	 * @param prefix
 	 */
-	public void pprint(int[] output, String prefix) {
-		LOGGER.info(prefix == null ? "" : prefix);
+	pprint: function(output, prefix) {	// void(int[], String)
+		this.LOGGER.info(isNullOrUndefined(prefix) ? "" : prefix);
 
-		List<Tuple> description = getDescription();
-		description.add(new Tuple("end", getWidth()));
+		var description = this.getDescription();
+		description.push(new Tuple("end", this.getWidth()));
 
-		int len = description.size() - 1;
-		for(int i = 0;i < len;i++) {
-			int offset = (int)description.get(i).get(1);
-			int nextOffset = (int)description.get(i + 1).get(1);
+		var len = description.length - 1;
+		for (var i=0; i<len; i++) {
+			var offset = description[i].get(1);
+			var nextOffset = description[i+1].get(1);
 
-            LOGGER.info(
-                    String.format("%s |",
-                            ArrayUtils.bitsToString(
-                                    ArrayUtils.sub(output, ArrayUtils.range(offset, nextOffset))
-                            )
-                    )
-            );
+            this.LOGGER.info(
+				ArrayUtils.bitsToString(
+					ArrayUtils.sub(output, ArrayUtils.range(offset, nextOffset)))));
         }
-    }
+    },
 
     /**
 	 * Takes an encoded output and does its best to work backwards and generate
@@ -977,35 +983,38 @@ Encoder.prototype = {
      *
 	 * @returns Tuple(fieldsMap, fieldOrder)
 	 */
-	@SuppressWarnings("unchecked")
-	public Tuple decode(int[] encoded, String parentFieldName) {
-		Map<String, Tuple> fieldsMap = new HashMap<String, Tuple>();
-		List<String> fieldsOrder = new ArrayList<String>();
+	decode: function(encoded, parentFieldName) {	// Tuple(int[], String)
+		var fieldsMap = new Map(); // new WeakMap();
+		var fieldsOrder = [];
 
-		String parentName = parentFieldName == null || parentFieldName.isEmpty() ?
-			getName() : String.format("%s.%s", parentFieldName, getName());
+		var parentName = isNullOrUndefined(parentFieldName) || parentFieldName.length === 0 ?
+			this.getName() : parentFieldName + "." + this.getName());
 
-		List<EncoderTuple> encoders = getEncoders(this);
-		int len = encoders.size();
-		for(int i = 0;i < len;i++) {
-			Tuple threeFieldsTuple = encoders.get(i);
-			int nextOffset = 0;
-			if(i < len - 1) {
-				nextOffset = (Integer)encoders.get(i + 1).get(2);
-			}else{
-				nextOffset = getW();
+		var encoders = this.getEncoders(this);
+		var len = encoders.length;
+		for (var i=0; i<len; i++) {
+			var threeFieldsTuple = encoders[i];
+			var nextOffset = 0;
+			if (i < len - 1) {
+				nextOffset = encoders[i+1].get(2);
+			} else {
+				nextOffset = this.getW();
 			}
 
-			int[] fieldOutput = ArrayUtils.sub(encoded, ArrayUtils.range((Integer)threeFieldsTuple.get(2), nextOffset));
+			var fieldOutput = ArrayUtils.sub(encoded, ArrayUtils.range(parseInt(threeFieldsTuple.get(2)), nextOffset));
 
-			Tuple result = ((Encoder<T>)threeFieldsTuple.get(1)).decode(fieldOutput, parentName);
+			var result = threeFieldsTuple.get(1)).decode(fieldOutput, parentName);
 
-			fieldsMap.putAll((Map<String, Tuple>)result.get(0));
-			fieldsOrder.addAll((List<String>)result.get(1));
+			for (var key in result.get(0)) {
+				fieldsMap.put(key, result.get(0).get(key));
+			}
+			for (var v in result.get(1)) {
+				fieldsOrder.push(v));
+			}
 		}
 
 		return new Tuple(fieldsMap, fieldsOrder);
-	}
+	},
 
 	/**
 	 * Return a pretty print string representing the return value from decode().
@@ -1013,22 +1022,21 @@ Encoder.prototype = {
 	 * @param decodeResults
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public String decodedToStr(Tuple decodeResults) {
-		StringBuilder desc = new StringBuilder();
-		Map<String, Tuple> fieldsDict = (Map<String, Tuple>)decodeResults.get(0);
-		List<String> fieldsOrder = (List<String>)decodeResults.get(1);
-		for(String fieldName : fieldsOrder) {
-			Tuple ranges = fieldsDict.get(fieldName);
-			if(desc.length() > 0) {
-				desc.append(", ").append(fieldName).append(":");
-			}else{
-				desc.append(fieldName).append(":");
+	decodedToStr: function(decodeResults) {	// String(Tuple)
+		var desc = "";
+		var fieldsDict = decodeResults.get(0);
+		var fieldsOrder = decodeResults.get(1);
+		for (var fieldName in fieldsOrder) {
+			var ranges = fieldsDict.get(fieldName);
+			if (desc.length > 0) {
+				desc += ", " + fieldName + ":";
+			} else {
+				desc += fieldName + ":";
 			}
-			desc.append("[").append(ranges.get(1)).append("]");
+			desc += "[" + ranges.get(1) + "]";
 		}
-		return desc.toString();
-	}
+		return desc;
+	},
 
 	/**
 	 * Returns a list of items, one for each bucket defined by this encoder.
@@ -1046,8 +1054,10 @@ Encoder.prototype = {
      * @return  list of items, each item representing the bucket value for that
      *          bucket.
 	 */
-	public abstract <S> List<S> getBucketValues(Class<S> returnType);
-
+	getBucketValues: function(returnType) {	// <S> List<S>(Class<S>)
+		throw new Error("getBucketValues must be overloaded.");
+	},
+	
 	/**
 	 * Returns a list of {@link EncoderResult}s describing the inputs for
      * each sub-field that correspond to the bucket indices passed in 'buckets'.
@@ -1058,29 +1068,30 @@ Encoder.prototype = {
 	 *
      * @return A list of {@link EncoderResult}s. Each EncoderResult has
 	 */
-	@SuppressWarnings("unchecked")
-	public List<EncoderResult> getBucketInfo(int[] buckets) {
+	getBucketInfo: function(buckets) {	// List<EncoderResult>(int[])
 		//Concatenate the results from bucketInfo on each child encoder
-		List<EncoderResult> retVals = new ArrayList<EncoderResult>();
-		int bucketOffset = 0;
-		for(EncoderTuple encoderTuple : getEncoders(this)) {
-			int nextBucketOffset = -1;
-			List<EncoderTuple> childEncoders = null;
-			if((childEncoders = getEncoders((Encoder<T>)encoderTuple.getEncoder())) != null) {
-				nextBucketOffset = bucketOffset + childEncoders.size();
-			}else{
+		var retVals = [];
+		var bucketOffset = 0;
+		for (var encoderTuple in this.getEncoders(this)) {
+			var nextBucketOffset = -1;
+			var childEncoders = this.getEncoders(encoderTuple.getEncoder());
+			if (!isNullOrUndefined(childEncoders)) {
+				nextBucketOffset = bucketOffset + childEncoders.length;
+			} else {
 				nextBucketOffset = bucketOffset + 1;
 			}
-			int[] bucketIndices = ArrayUtils.sub(buckets, ArrayUtils.range(bucketOffset, nextBucketOffset));
-			List<EncoderResult> values = encoderTuple.getEncoder().getBucketInfo(bucketIndices);
+			var bucketIndices = ArrayUtils.sub(buckets, ArrayUtils.range(bucketOffset, nextBucketOffset));
+			var values = encoderTuple.getEncoder().getBucketInfo(bucketIndices);
 
-			retVals.addAll(values);
+			for (var value in values) {
+				retVals.push(value);
+			}
 
 			bucketOffset = nextBucketOffset;
 		}
 
 		return retVals;
-	}
+	},
 
 	/**
 	 * Returns a list of EncoderResult named tuples describing the top-down
@@ -1112,70 +1123,73 @@ Encoder.prototype = {
      *                          encode(), an identical bit-array should be
      *                          returned.
 	 */
-	@SuppressWarnings("unchecked")
-	public List<EncoderResult> topDownCompute(int[] encoded) {
-		List<EncoderResult> retVals = new ArrayList<EncoderResult>();
+	topDownCompute: function(encoded) {	// List<EncoderResult>(int[])
+		var retVals = [];
 
-		List<EncoderTuple> encoders = getEncoders(this);
-		int len = encoders.size();
-		for(int i = 0;i < len;i++) {
-			int offset = (int)encoders.get(i).get(2);
-			Encoder<T> encoder = (Encoder<T>)encoders.get(i).get(1);
+		var encoders = this.getEncoders(this);
+		var len = encoders.length;
+		for (var i=0; i<len; i++) {
+			var offset = parseInt(encoders[i].get(2));
+			var encoder = encoders[i].get(1);
 
-			int nextOffset;
-			if(i < len - 1) {
+			var nextOffset;
+			if (i < len - 1) {
 				//Encoders = List<Encoder> : Encoder = EncoderTuple(name, encoder, offset)
-				nextOffset = (int)encoders.get(i + 1).get(2);
-			}else{
-				nextOffset = getW();
+				nextOffset = parseInt(encoders[i+1].get(2));
+			} else {
+				nextOffset = this.getW();
 			}
 
-			int[] fieldOutput = ArrayUtils.sub(encoded, ArrayUtils.range(offset, nextOffset));
-			List<EncoderResult> values = encoder.topDownCompute(fieldOutput);
+			var fieldOutput = ArrayUtils.sub(encoded, ArrayUtils.range(offset, nextOffset));
+			var values = encoder.topDownCompute(fieldOutput);
 
-			retVals.addAll(values);
+			for (var value in values) {
+				retVals.push(value);
+			}
 		}
 
 		return retVals;
-	}
+	},
 
-	public TDoubleList closenessScores(TDoubleList expValues, TDoubleList actValues, boolean fractional) {
-		TDoubleList retVal = new TDoubleArrayList();
+	closenessScores: function(expValues, actValues, fractional) {	// TDoubleList(TDoubleList, TDoubleList, boolean)
+		var retVal = [];
 
 		//Fallback closenss is a percentage match
-		List<EncoderTuple> encoders = getEncoders(this);
-		if(encoders == null || encoders.size() < 1) {
-			double err = Math.abs(expValues.get(0) - actValues.get(0));
-			double closeness = -1;
-			if(fractional) {
-				double denom = Math.max(expValues.get(0), actValues.get(0));
-				if(denom == 0) {
+		var encoders = this.getEncoders(this);
+		if (isNullOrUndefined(encoders) || encoders.length < 1) {
+			var err = Math.abs(expValues[0] - actValues[0]);
+			var closeness = -1;
+			if (fractional) {
+				var denom = Math.max(expValues[0], actValues[0]);
+				if (denom === 0) {
 					denom = 1.0;
 				}
 
 				closeness = 1.0 - err/denom;
-				if(closeness < 0) {
+				if (closeness < 0) {
 					closeness = 0;
 				}
-			}else{
+			} else {
 				closeness = err;
 			}
 
-			retVal.add(closeness);
+			retVal.push(closeness);
 			return retVal;
 		}
 
-		int scalarIdx = 0;
-		for(EncoderTuple res : getEncoders(this)) {
-			TDoubleList values = res.getEncoder().closenessScores(
-				expValues.subList(scalarIdx, expValues.size()), actValues.subList(scalarIdx, actValues.size()), fractional);
+		var scalarIdx = 0;
+		for (var res in this.getEncoders(this)) {
+			var values = res.getEncoder().closenessScores(
+				expValues.slice(scalarIdx, expValues.length), actValues.slice(scalarIdx, actValues.length), fractional);
 
-			scalarIdx += values.size();
-			retVal.addAll(values);
+			scalarIdx += values.length;
+			for (var value in values) {
+				retVal.push(value);
+			}
 		}
 
 		return retVal;
-	}
+	},
 
 	/**
      * Returns an array containing the sum of the right
@@ -1185,103 +1199,100 @@ Encoder.prototype = {
      * @param encoded
      * @return
      */
-    public int[] rightVecProd(SparseObjectMatrix<int[]> matrix, int[] encoded) {
-    	int[] retVal = new int[matrix.getMaxIndex() + 1];
-    	for(int i = 0;i < retVal.length;i++) {
-    		int[] slice = matrix.getObject(i);
-    		for(int j = 0;j < slice.length;j++) {
+    rightVecProd: function(matrix, encoded) {	// int[](SparseObjectMatrix<int[]>, int[])
+    	var retVal = newArray([matrix.getMaxIndex() + 1], 0);
+    	for (var i=0; i<retVal.length; i++) {
+    		var slice = matrix.getObject(i);
+    		for (var j=0; j<slice.length; j++) {
     			retVal[i] += (slice[j] * encoded[j]);
     		}
     	}
     	return retVal;
-    }
+    },
 
 	/**
 	 * Calculate width of display for bits plus blanks between fields.
 	 *
 	 * @return	width
 	 */
-	public int getDisplayWidth() {
-		return getWidth() + getDescription().size() - 1;
-	}
+	getDisplayWidth: function() {	// int(void)
+		return this.getWidth() + this.getDescription().length - 1;
+	},
 
 	/**
 	 * Base class for {@link Encoder} builders
 	 * @param <T>
 	 */
-	@SuppressWarnings("unchecked")
-	public static abstract class Builder<K, E> {
-		protected int n;
-		protected int w;
-		protected double minVal;
-		protected double maxVal;
-		protected double radius;
-		protected double resolution;
-		protected boolean periodic;
-		protected boolean clipInput;
-		protected boolean forced;
-		protected String name;
+	Builder: function {
+		this.encoder = null;
+	},
 
-		protected Encoder<?> encoder;
+	Builder.prototype.build: function() {
+		if (isNullOrUndefined(encoder)) {
+			throw new Error("Subclass did not instantiate builder type " +
+				"before calling this method!");
+		}
+		this.encoder.setN(this.N);
+		this.encoder.setW(this.W);
+		this.encoder.setMinVal(this.MinVal);
+		this.encoder.setMaxVal(this.MaxVal);
+		this.encoder.setRadius(this.Radius);
+		this.encoder.setResolution(this.Resolution);
+		this.encoder.setPeriodic(this.Periodic);
+		this.encoder.setClipInput(this.ClipInput);
+		this.encoder.setForced(this.Forced);
+		this.encoder.setName(this.Name);
 
-		public E build() {
-			if(encoder == null) {
-				throw new IllegalStateException("Subclass did not instantiate builder type " +
-					"before calling this method!");
-			}
-			encoder.setN(n);
-			encoder.setW(w);
-			encoder.setMinVal(minVal);
-			encoder.setMaxVal(maxVal);
-			encoder.setRadius(radius);
-			encoder.setResolution(resolution);
-			encoder.setPeriodic(periodic);
-			encoder.setClipInput(clipInput);
-			encoder.setForced(forced);
-			encoder.setName(name);
+		return this.encoder;
+	},
 
-			return (E)encoder;
-		}
-
-		public K n(int n) {
-			this.n = n;
-			return (K)this;
-		}
-		public K w(int w) {
-			this.w = w;
-			return (K)this;
-		}
-		public K minVal(double minVal) {
-			this.minVal = minVal;
-			return (K)this;
-		}
-		public K maxVal(double maxVal) {
-			this.maxVal = maxVal;
-			return (K)this;
-		}
-		public K radius(double radius) {
-			this.radius = radius;
-			return (K)this;
-		}
-		public K resolution(double resolution) {
-			this.resolution = resolution;
-			return (K)this;
-		}
-		public K periodic(boolean periodic) {
-			this.periodic = periodic;
-			return (K)this;
-		}
-		public K clipInput(boolean clipInput) {
-			this.clipInput = clipInput;
-			return (K)this;
-		}
-		public K forced(boolean forced) {
-			this.forced = forced;
-			return (K)this;
-		}
-		public K name(String name) {
-			this.name = name;
-			return (K)this;
-		}
+	Builder.prototype.n: function(N) {
+		this.N = N;
+		return this;
+	},
+	
+	Builder.prototype.w: function(W) {
+		this.W = W;
+		return this;
+	},
+	
+	Builder.prototype.minVal: function(MinVal) {
+		this.MinVal = MinVal;
+		return this;
+	},
+	
+	Builder.prototype.maxVal: function(MaxVal) {
+		this.MaxVal = MaxVal;
+		return this;
+	},
+	
+	Builder.prototype.radius: function(Radius) {
+		this.Radius = Radius;
+		return this;
+	},
+	
+	Builder.prototype.resolution: function(Resolution) {
+		this.Resolution = Resolution;
+		return this;
+	},
+	
+	Builder.prototype.periodic: function(Periodic) {
+		this.Periodic = Periodic;
+		return this;
+	},
+	
+	Builder.prototype.clipInput: function(ClipInput) {
+		this.ClipInput = ClipInput;
+		return this;
+	},
+	
+	Builder.prototype.forced: function(Forced) {
+		this.Forced = Forced;
+		return this;
+	},
+	
+	Builder.prototype.name: function(Name) {
+		this.Name = Name;
+		return this;
 	}
 }
