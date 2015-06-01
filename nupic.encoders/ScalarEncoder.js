@@ -396,15 +396,15 @@ ScalarEncoder.prototype.encodeIntoArray = function(input, output) { // void(Doub
         ArrayUtils.setIndexesTo(output, ArrayUtils.range(minbin, maxbin + 1), 1);
     }
 
-    /*
+    
 	this.LOGGER.trace("");
     this.LOGGER.trace("input: " + input);
-    this.LOGGER.trace("range: " + this.getMinVal() + " - " + this.getMaxVal());
-    this.LOGGER.trace("n:" + this.getN() + "w:" + this.getW() + "resolution:" + this.getResolution() +
-        "radius:" + this.getRadius() + "periodic:" + this.isPeriodic());
-    this.LOGGER.trace("output: " + output.toString());
-    this.LOGGER.trace("input desc: " + this.decode(output, ""));
-	*/
+    this.LOGGER.trace(" range: " + this.getMinVal() + " - " + this.getMaxVal());
+    this.LOGGER.trace(" n:" + this.getN() + " w:" + this.getW() + " resolution:" + this.getResolution() +
+        " radius:" + this.getRadius() + " periodic:" + this.isPeriodic());
+    this.LOGGER.trace(" output: " + output.toString());
+    this.LOGGER.trace(" input desc: " + this.decode(output, ""));
+	
 };
 
 /**

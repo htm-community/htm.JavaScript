@@ -1,59 +1,117 @@
 <script src="./util.js"></script>
-<script src="../misc/webtoolkit.md5.js"></script>
+<script src="./webtoolkit.md5.js"></script>
+<script src="../nupic.util/Deque.js"></script>
 
 <script>
-    var ar = [1, 2, 3, 4, 5];
-    console.log(ar);
-    ar = ar.slice(1, ar.length);
-    console.log(ar.toString());
 
-    console.log("x=" + parseInt(5));
+var bH = new Map();
+var key = HashCode.value(new Array([1, 2, 3, 4]));
+bH.set(key, "OK");
+key = HashCode.value(new Array([1, 2, 3, 4]));
+console.log(bH.get(key));
 
-    var c = function(n) {
-        this.n = n;
-    };
+console.log(bH.set([1,2], "KO"));
+console.log(bH.get([1,2]));
 
-    c.prototype.N = function(n) {
-        this.n = n;
-        console.log(n);
-    }
+var Encoder = function() {
+	this.n = 0;
+};
 
-    var c = new c(19);
-    c.N(20);
+Encoder.prototype.setN = function(n) {	
+	this.n = n;
+};
+	
+Encoder.prototype.getN = function() {
+	return this.n;
+};
+	
+/**
+ * Base class for {@link Encoder} builders
+ * @param <T>
+ */
+Encoder.prototype.Builder = function() {};
 
-    var x = 10;
+//Encoder.prototype.encoder = null;
+//Encoder.prototype.Builder.prototype.encoder = null;
 
-    var s = "wert=";
+Encoder.prototype.Builder.build = function() {
 
-    console.log(s + x);
+	if (isNullOrUndefined(this.encoder)) {
+		throw new Error("Subclass did not instantiate builder type " +
+			"before calling this method!");
+	}
+	this.encoder.setN(this.n);
+		
+	return this.encoder;
+};
 
-    var encoder = function(x) {
-        this.x = x;
-    };
+Encoder.prototype.Builder.n = function(n) {
+	this.n = n;
+	return this;
+};
 
-    encoder.prototype = {
-        encode: function() {
-            console.log("encoder::encode");
-            scalarEncoder.prototype.encodeIntoArray.call(this, 30);
-            // compare to:
-            scalarEncoder.prototype.encodeIntoArray(30);
-        }
-    };
+///////////////////////////////////////////////////////////
 
-    var scalarEncoder = function() {
-        encoder.call(this, 20);
-    };
+var ScalarEncoder = function() {
+	Encoder.call(this);
+};
+	
+ScalarEncoder.prototype = Object.create(Encoder.prototype);
+ScalarEncoder.prototype.constructor = ScalarEncoder;
 
-    scalarEncoder.prototype = Object.create(encoder.prototype);
-    scalarEncoder.prototype.constructor = scalarEncoder;
+ScalarEncoder.prototype.builder = function() {	
+	return new ScalarEncoder.prototype.Builder();
+};
 
-    scalarEncoder.prototype.encodeIntoArray = function(y) {
-        console.log("scalarEncoder::encodeIntoArray");
-        console.log(this.x);
-        console.log(y);
-    };
+ScalarEncoder.prototype.init = function() {	
+	this.setN(this.getN() + 1);
+};
 
-    var se = new scalarEncoder();
+/**
+ * Returns a {@link EncoderBuilder} for constructing {@link ScalarEncoder}s
+ *
+ * The base class architecture is put together in such a way where boilerplate
+ * initialization can be kept to a minimum for implementing subclasses, while avoiding
+ * the mistake-proneness of extremely long argument lists.
+ *
+ * @see ScalarEncoder.Builder#setStuff(int)
+ */
+ScalarEncoder.prototype.Builder = function() {
+	Encoder.prototype.Builder.call(this);
 
-    se.encode();
+	this.build = function() {
+		//Must be instantiated so that super class can initialize
+		//boilerplate variables.
+		this.encoder = new ScalarEncoder();
+		
+		//Call super class here
+		Encoder.prototype.Builder.build.call(this);
+		
+		////////////////////////////////////////////////////////
+		//  Implementing classes would do setting of specific //
+		//  vars here together with any sanity checking       //
+		////////////////////////////////////////////////////////
+
+		this.encoder.init();
+		return this.encoder;
+	}
+};
+
+ScalarEncoder.prototype.Builder.prototype = Object.create(Encoder.prototype.Builder);
+ScalarEncoder.prototype.Builder.constructor = ScalarEncoder.prototype.Builder;
+
+///////////////////////////////////////////////////////////
+
+var QuickTest = function() {};
+
+QuickTest.prototype = {
+	main: function() {
+		var dayBuilder = ScalarEncoder.prototype.builder().n(8);
+		var encoder = dayBuilder.build();		
+	}
+};
+
+var qt = new QuickTest();
+qt.main();
+
 </script>

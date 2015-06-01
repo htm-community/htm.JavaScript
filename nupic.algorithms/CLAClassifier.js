@@ -182,8 +182,9 @@ CLAClassifier.prototype = {
 
                 for (var j=0; j<patternNZ.length; j++) {
                     var bit = patternNZ[j];
-                    var key = HashCode.value(new Tuple(bit, nSteps));	// just new Tuple(// just "key = new Tuple(bit, nSteps)" doesn't work) doesn't work, neither does "key = [bit, nSteps]"
-                    var history = this.activeBitHistory.get(key);
+					var t = new Tuple(bit, nSteps);	// just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
+					var key = t.hashCode();	
+					var history = this.activeBitHistory.get(key);
                     if (isNullOrUndefined(history)) {
                         continue;
                     }
@@ -282,7 +283,8 @@ CLAClassifier.prototype = {
                 for (var i = 0; i < learnPatternNZ.length; i++) {
                     var bit = learnPatternNZ[i];
                     // Get the history structure for this bit and step
-                    var key = HashCode.value(new Tuple(bit, nSteps));	// just new Tuple(// just "key = new Tuple(bit, nSteps)" doesn't work) doesn't work, neither does "key = [bit, nSteps]"
+					var t = new Tuple(bit, nSteps);	// just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
+					var key = t.hashCode();	
                     var history = this.activeBitHistory.get(key);
                     if (isNullOrUndefined(history)) {
                         this.activeBitHistory.set(key, history = new BitHistory(this, bit, nSteps));

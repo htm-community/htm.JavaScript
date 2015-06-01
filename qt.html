@@ -1,39 +1,41 @@
 <html>
 
 <head>
-    <title>HelloSP: HTM Spatial Pooler Demo</title>
+    <title>QuickTest Demo</title>
     <meta charset="UTF-8">
     <meta name="author" content="Ralf Seliger">
-    <meta name="description" content="This program uses a JavaScript web worker to run a HTM spatial pooler demo">
+    <meta name="description" content="This program uses a JavaScript web worker to run the HTM QuickTest demo">
     <meta name="keywords" content="Hierarchical Temporal Memory, Cortical Learning Algorithm, HTM, CLA, NuPIC, Spatial Pooler, Temporal Memory">
     <script>
         window.onload = function() {
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                document.getElementById("progress").innerHTML = "Running Spatial Pooler Demo ...";
+                document.getElementById("progress").innerHTML = "Running QuickTest Demo ...";
 
                 var timer = setInterval(function() {
                     document.getElementById("progress").innerHTML += ".";
                 }, 1000);
 
-                var spWorker = new Worker("./nupic.examples.sp/HelloSP.js");
+                var qtWorker = new Worker("./nupic.examples.qt/QuickTest.js");
 
-                spWorker.onmessage = function(event) {
+                qtWorker.onmessage = function(event) {
                     if (event.data === "done") {
                         document.getElementById("progress").innerHTML += " done";
                         clearInterval(timer);
                     } else {
-                        var html = document.getElementById("result").innerHTML;
-                        document.getElementById("result").innerHTML = html + event.data;
+                        var el = document.getElementById("result");
+                        el.innerHTML = el.innerHTML + event.data;
+                        var body = document.getElementsByTagName("body")[0];
+                        body.scrollTop = body.scrollHeight;
                     }
                 };
 
-                spWorker.onerror = function(event) {
+                qtWorker.onerror = function(event) {
                     document.getElementById("error").innerHTML = event.message + " (" + event.filename + ":" + event.lineno + ")";
                     this.terminate();
                     clearInterval(timer);
                 };
 
-                spWorker.postMessage({
+                qtWorker.postMessage({
                     url: window.location.protocol + "//" + window.location.host + window.location.pathname
                 });
             } else {
