@@ -307,7 +307,7 @@ SparseBinaryMatrix.prototype.all = function() {
         var keySet = new Set(that.sparseMap.keys());
         var matrixKeySet = new Set(matrix.sparseMap.keys());
 
-        for (var key in matrixKeySet) {
+        for (var key of matrixKeySet) {
             if (!keySet.has(key)) {
                 return false;
             }
@@ -358,7 +358,7 @@ SparseBinaryMatrix.prototype.any = function() {
     var anyByMatrix = function(matrix) { // boolean(SparseBinaryMatrix)
         var matrixKeySet = new Set(matrix.sparseMap.keys());
 
-        for (var key in matrixKeySet) {
+        for (var key of matrixKeySet) {
             if (that.sparseMap.has(key)) {
                 return true;
             }

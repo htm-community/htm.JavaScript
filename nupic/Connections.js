@@ -86,13 +86,13 @@ var Connections = function() {
 
     /////////////////////////////////////// Temporal Memory Vars ///////////////////////////////////////////
 
-    this.activeCells = null; // Set<Cell> activeCells = new LinkedHashSet<Cell>();
-    this.winnerCells = null; // Set<Cell> winnerCells = new LinkedHashSet<Cell>();
-    this.predictiveCells = null; // Set<Cell> predictiveCells = new LinkedHashSet<Cell>();
-    this.predictedColumns = null; // Set<Column> predictedColumns = new LinkedHashSet<Column>();
-    this.activeSegments = null; // Set<DistalDendrite> activeSegments = new LinkedHashSet<DistalDendrite>();
-    this.learningSegments = null; // Set<DistalDendrite> learningSegments = new LinkedHashSet<DistalDendrite>();
-    this.activeSynapsesForSegment = null; // Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
+    this.activeCells = new Set(); // Set<Cell> activeCells = new LinkedHashSet<Cell>();
+    this.winnerCells = new Set(); // Set<Cell> winnerCells = new LinkedHashSet<Cell>();
+    this.predictiveCells = new Set(); // Set<Cell> predictiveCells = new LinkedHashSet<Cell>();
+    this.predictedColumns = new Set(); // Set<Column> predictedColumns = new LinkedHashSet<Column>();
+    this.activeSegments = new Set(); // Set<DistalDendrite> activeSegments = new LinkedHashSet<DistalDendrite>();
+    this.learningSegments = new Set(); // Set<DistalDendrite> learningSegments = new LinkedHashSet<DistalDendrite>();
+    this.activeSynapsesForSegment = new Map(); // Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
 
     /** Total number of columns */
     this.columnDimensions = [2048]; // int[] columnDimensions = new int[] { 2048 };
@@ -172,13 +172,13 @@ Connections.prototype = {
      * Clears all state.
      */
     clear: function() { // void(void)
-        this.activeCells.length = 0;
-        this.winnerCells.length = 0;
-        this.predictiveCells.length = 0;
-        this.predictedColumns.length = 0;
-        this.activeSegments.length = 0;
-        this.learningSegments.length = 0;
-        this.activeSynapsesForSegment.length = 0;
+        this.activeCells.clear();
+        this.winnerCells.clear();
+        this.predictiveCells.clear();
+        this.predictedColumns.clear();
+        this.activeSegments.clear();
+        this.learningSegments.clear();
+        this.activeSynapsesForSegment.clear();
     },
 
     /**
@@ -1427,6 +1427,7 @@ Connections.prototype = {
      * @return
      */
     asCellIndexes: function(cells) { // List<Integer>(Collection<Cell>)
+        throw new Error("Connections::asCellIndexes: Need to implement proper iteration method.");
         var ints = [];
         for (var cell in cells) {
             ints.push(cell.getIndex());
@@ -1443,6 +1444,7 @@ Connections.prototype = {
      * @return
      */
     asColumnIndexes: function(columns) { // List<Integer>(Collection<Column>)
+        throw new Error("Connections::asColumnIndexes: Need to implement proper iteration method.");
         var ints = [];
         for (var col in columns) {
             ints.push(col.getIndex());
@@ -1457,6 +1459,7 @@ Connections.prototype = {
      * @return	the specified list of cells
      */
     asCellObjects: function(cells) { // List<Cell>(Collection<Integer>)
+        throw new Error("Connections::asCellObjects: Need to implement proper iteration method.");
         var objs = [];
         for (var i in cells) {
             objs.push(this.cells[i]);
@@ -1470,6 +1473,7 @@ Connections.prototype = {
      * @return		the specified list of columns
      */
     asColumnObjects: function(cols) { // List<Column>(Collection<Integer>)
+        throw new Error("Connections::asColumnObjects: Need to implement proper iteration method.");
         var objs = [];
         for (var i in cols) {
             objs.push(this.memory.getObject(i));

@@ -14,23 +14,49 @@
  * @author cogmission
  * @author Ralf Seliger (port to JavaScript)
  */
-var QuickTest = {
+var QuickTest = function() {};
 
-    main: function() { // void(String[])
+QuickTest.prototype = {
+
+    /**
+     * @param args the command line arguments
+     */
+    main: function(args) { // void(String[])
         var params = this.getParameters();
         console.log(params);
 
+        //Layer components
+        var dayBuilder =
+            ScalarEncoder.prototype.builder()
+            .n(8)
+            .w(3)
+            .radius(1.0)
+            .minVal(1.0)
+            .maxVal(8)
+            .periodic(true)
+            .forced(true)
+            .resolution(1);
+        var encoder = dayBuilder.build();
+        var sp = new SpatialPooler();
+        var tm = new TemporalMemory();
+        var classifier = new CLAClassifier(newArray([1], 1), 0.1, 0.3, 0);
 
+        var layer = this.getLayer(params, encoder, sp, tm, classifier);
 
-
+        for (var i = 1, x = 0; x < 10000; i = (i == 7 ? 1 : i + 1), x++) { // USE "X" here to control run length
+            if (i === 1) {
+                tm.reset(layer.getMemory());
+            }
+            this.runThroughLayer(layer, i, i, x);
+        }
     },
 
     getParameters: function() { // Parameters(void)
         var parameters = new Parameters();
         var p = parameters.getAllDefaultParameters();
 
-        p['INPUT_DIMENSIONS'] = newArray([8], 0);
-        p['COLUMN_DIMENSIONS'] = newArray([20], 0);
+        p['INPUT_DIMENSIONS'] = [8];
+        p['COLUMN_DIMENSIONS'] = [20];
         p['CELLS_PER_COLUMN'] = 6;
 
         //SpatialPooler specific
@@ -64,38 +90,140 @@ var QuickTest = {
     },
 
     runThroughLayer: function(l, input, recordNum, sequenceNum) { // <T> void(Layer<T>, T, int, int)
-
+        l.input(input, recordNum, sequenceNum);
     },
 
     getLayer: function(p, e, s, t, c) { // Layer<Double>(Parameters, ScalarEncoder, SpatialPooler, TemporalMemory, CLAClassifier)	
-
-    },
-
-    /**
-     * I'm going to make an actual Layer, this is just temporary so I can
-     * work out the details while I'm completing this for Peter
-     * 
-     * @author David Ray
-     * @author Ralf Seliger (port to JavaScript)
-     *
-     */
-    LayerImpl: function(p, e, s, t, c) { // LayerImpl(Parameters, ScalarEncoder, SpatialPooler, TemporalMemory, CLAClassifier)
-
+        var l = new this.LayerImpl(p, e, s, t, c);
+        return l;
     }
 };
 
-QuickTest.LayerImpl.prototype = {
+////////////////// Preliminary Network API Toy ///////////////////
+/**
+ * I'm going to make an actual Layer, this is just temporary so I can
+ * work out the details while I'm completing this for Peter
+ * 
+ * @author David Ray
+ * @author Ralf Seliger (port to JavaScript)
+ *
+ */
+QuickTest.prototype.LayerImpl = function(p, e, s, t, c) { // LayerImpl(Parameters, ScalarEncoder, SpatialPooler, TemporalMemory, CLAClassifier)
+    this.memory = new Connections();
+    this.classification = new Map(); // Map<String, Object> classification = new LinkedHashMap<String, Object>();
+    this.theNum = 0;
 
+    this.predictedColumns = null; // int[]
+    this.actual = null; // int[]	
+    this.lastPredicted = null; // int[]
+
+    this.params = new Parameters();
+    this.encoder = e;
+    this.spatialPooler = s;
+    this.temporalMemory = t;
+    this.classifier = c;
+
+    this.params.apply(p, this.memory);
+    this.spatialPooler.init(this.memory);
+    this.temporalMemory.init(this.memory);
+
+    this.columnCount = this.memory.getPotentialPools().getMaxIndex() + 1; //If necessary, flatten multi-dimensional index 
+    this.cellsPerColumn = this.memory.getCellsPerColumn();
+};
+
+QuickTest.prototype.LayerImpl.prototype = {
     input: function(value, recordNum, sequenceNum) { // void(Double, int, int)
+        var recordOut = "";
+        switch (recordNum) {
+            case 1:
+                recordOut = "Monday (1)";
+                break;
+            case 2:
+                recordOut = "Tuesday (2)";
+                break;
+            case 3:
+                recordOut = "Wednesday (3)";
+                break;
+            case 4:
+                recordOut = "Thursday (4)";
+                break;
+            case 5:
+                recordOut = "Friday (5)";
+                break;
+            case 6:
+                recordOut = "Saturday (6)";
+                break;
+            case 7:
+                recordOut = "Sunday (7)";
+                break;
+        }
 
+        if (recordNum === 1) {
+            this.theNum++;
+            console.log("--------------------------------------------------------");
+            console.log("Iteration: " + this.theNum);
+        }
+        console.log("===== " + recordOut + "  - Sequence Num: " + sequenceNum + " =====");
+
+        var output = newArray([this.columnCount], 0);
+
+        //Input through encoder
+        console.log("ScalarEncoder Input = " + value);
+        var encoding = this.encoder.encode(value);
+        console.log("ScalarEncoder Output = " + encoding.toString());
+        var bucketIdx = this.encoder.getBucketIndices(value)[0];
+
+        //Input through spatial pooler
+        this.spatialPooler.compute(this.memory, encoding, output, true, true);
+        console.log("SpatialPooler Output = " + output.toString());
+
+        //Input through temporal memory
+        var input = this.actual = ArrayUtils.where(output, ArrayUtils.WHERE_1);
+        var cc = this.temporalMemory.compute(this.memory, input, true);
+        if (!isNullOrUndefined(this.predictedColumns)) {
+            this.lastPredicted = copyOf(this.predictedColumns, "array");
+        }
+        this.predictedColumns = this.getSDR(cc._predictiveCells()); //Get the active column indexes
+        console.log("TemporalMemory Input = " + input.toString());
+        console.log("TemporalMemory Prediction = " + this.predictedColumns.toString());
+
+        this.classification.set("bucketIdx", bucketIdx);
+        this.classification.set("actValue", value);
+        var result = this.classifier.compute(recordNum, this.classification, this.predictedColumns, true, true);
+
+        console.log("  |  CLAClassifier 1 step prob = " + result.getStats(1).toString() + "\n");
+
+        console.log("");
     },
 
     inflateSDR: function(SDR, len) { // int[](int[], int)
-
+        var retVal = newArray([len], 0);
+        for (var i = 0; i < SDR.length; i++) {
+            retVal[SDR[i]] = 1;
+        }
+        return retVal;
     },
 
     getSDR: function(cells) { // int[](Set<Cell>)
+        var retVal = newArray([cells.size], 0);
+        var i = 0;
+        var it = cells[Symbol.iterator]();
+        for (;;) {
+            var cell = it.next();
+            if (i >= retVal.length || cell['done']) {
+                break;
+            }
+            retVal[i] = cell['value'].getIndex();
+            retVal[i] /= this.cellsPerColumn; // Get the column index
+            retVal[i] = Math.floor(retVal[i]);
+            i++;
+        }
+        retVal.sort(function(a, b) {
+            return a - b;
+        });
+        retVal = ArrayUtils.unique(retVal);
 
+        return retVal;
     },
 
     /**
@@ -104,7 +232,7 @@ QuickTest.LayerImpl.prototype = {
      * @return the SDR representing the prediction
      */
     getPredicted: function() { // int[](void)
-
+        return this.lastPredicted;
     },
 
     /**
@@ -114,7 +242,7 @@ QuickTest.LayerImpl.prototype = {
      * @return
      */
     getActual: function() { // int[](void)
-
+        return this.actual;
     },
 
     /**
@@ -122,8 +250,10 @@ QuickTest.LayerImpl.prototype = {
      * @return
      */
     getMemory: function() { // Connections(void)
-
+        return this.memory;
     }
 };
 
-QuickTest.main([]);
+var example = new QuickTest();
+
+example.main([]);

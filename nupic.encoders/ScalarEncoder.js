@@ -117,7 +117,7 @@ var ScalarEncoder = function() {
 };
 
 ScalarEncoder.prototype = Object.create(Encoder.prototype);
-ScalarEncoder.prototype.constructor = Encoder;
+ScalarEncoder.prototype.constructor = ScalarEncoder;
 
 /**
  * Returns a builder for building ScalarEncoders.
@@ -126,7 +126,7 @@ ScalarEncoder.prototype.constructor = Encoder;
  * @return a {@code ScalarEncoder.Builder}
  */
 ScalarEncoder.prototype.builder = function() { // Encoder.Builder<ScalarEncoder.Builder, ScalarEncoder>(void)
-    return new ScalarEncoder.Builder();
+    return new ScalarEncoder.prototype.Builder();
 };
 
 /**
@@ -186,11 +186,11 @@ ScalarEncoder.prototype.init = function() { // void(void)
     this.setNInternal(this.getN() - 2 * this.getPadding());
 
     if (isNullOrUndefined(this.getName())) {
-        if ((this.getMinVal() % this.getMinVal()) > 0 ||
-            (this.getMaxVal() % this.getMaxVal()) > 0) {
+        if ((this.getMinVal() % Math.floor(this.getMinVal())) > 0 ||
+            (this.getMaxVal() % Math.floor(this.getMaxVal())) > 0) {
             this.setName("[" + this.getMinVal() + ":" + this.getMaxVal() + "]");
         } else {
-            this.setName("[" + parseInt(this.getMinVal()) + ":" + parseInt(this.getMaxVal()) + "]");
+            this.setName("[" + this.getMinVal() + ":" + this.getMaxVal() + "]");
         }
     }
 
@@ -199,7 +199,7 @@ ScalarEncoder.prototype.init = function() { // void(void)
         this.checkReasonableSettings();
     }
     var name = this.getName();
-    var val = name === "None" ? "[" + parseInt(this.getMinVal()) + ":" + parseInt(this.getMaxVal()) + "]" : name;
+    var val = name === "None" ? "[" + Math.floor(this.getMinVal()) + ":" + Math.floor(this.getMaxVal()) + "]" : name;
     this.description.push(new Tuple(val, 0));
 };
 
@@ -216,7 +216,7 @@ ScalarEncoder.prototype.init = function() { // void(void)
  */
 ScalarEncoder.prototype.initEncoder = function(w, minVal, maxVal, n, radius, resolution) { // void(int, double, double, int, double, double)
     if (n !== 0) {
-        if (!NUmber.isNaN(minVal) && !Number.isNaN(maxVal)) {
+        if (!Number.isNaN(minVal) && !Number.isNaN(maxVal)) {
             if (!this.isPeriodic()) {
                 this.setResolution(this.getRangeInternal() / (this.getN() - this.getW()));
             } else {
@@ -248,7 +248,7 @@ ScalarEncoder.prototype.initEncoder = function(w, minVal, maxVal, n, radius, res
         }
 
         var nFloat = w * (this.getRange() / this.getRadius()) + 2 * this.getPadding();
-        this.setN(Math.ceil(nFloat));
+        this.setN(Math.floor(Math.ceil(nFloat)));
     }
 };
 
@@ -277,7 +277,7 @@ ScalarEncoder.prototype.getFirstOnBit = function(input) { // Integer(double)
     }
 
     if (this.isPeriodic()) {
-        if (input >= getMaxVal()) {
+        if (input >= this.getMaxVal()) {
             throw new IllegalStateException("input (" + input + ") greater than periodic range (" +
                 getMinVal() + " - " + getMaxVal());
         }
@@ -295,9 +295,9 @@ ScalarEncoder.prototype.getFirstOnBit = function(input) { // Integer(double)
 
     var centerbin;
     if (this.isPeriodic()) {
-        centerbin = (input - this.getMinVal()) * this.getNInternal() / this.getRange() + this.getPadding();
+        centerbin = Math.floor((input - this.getMinVal()) * this.getNInternal() / this.getRange()) + this.getPadding();
     } else {
-        centerbin = (input - this.getMinVal() + this.getResolution() / 2) / this.getResolution() + this.getPadding();
+        centerbin = Math.floor((input - this.getMinVal() + this.getResolution() / 2) / this.getResolution()) + this.getPadding();
     }
 
     return centerbin - this.getHalfWidth();
@@ -396,13 +396,15 @@ ScalarEncoder.prototype.encodeIntoArray = function(input, output) { // void(Doub
         ArrayUtils.setIndexesTo(output, ArrayUtils.range(minbin, maxbin + 1), 1);
     }
 
-    this.LOGGER.trace("");
+    /*
+	this.LOGGER.trace("");
     this.LOGGER.trace("input: " + input);
     this.LOGGER.trace("range: " + this.getMinVal() + " - " + this.getMaxVal());
     this.LOGGER.trace("n:" + this.getN() + "w:" + this.getW() + "resolution:" + this.getResolution() +
         "radius:" + this.getRadius() + "periodic:" + this.isPeriodic());
     this.LOGGER.trace("output: " + output.toString());
     this.LOGGER.trace("input desc: " + this.decode(output, ""));
+	*/
 };
 
 /**
@@ -421,7 +423,7 @@ ScalarEncoder.prototype.decode = function(encoded, parentFieldName) { // DecodeR
     if (isNullOrUndefined(encoded) || encoded.length < 1) {
         return null;
     }
-    var tmpOutput = copyOf(encoded);
+    var tmpOutput = copyOf(encoded, "array");
 
     // ------------------------------------------------------------------------
     // First, assume the input pool is not sampled 100%, and fill in the
@@ -431,7 +433,7 @@ ScalarEncoder.prototype.decode = function(encoded, parentFieldName) { // DecodeR
     // Search for portions of the output that have "holes"
     var maxZerosInARow = this.getHalfWidth();
     for (var i = 0; i < this.maxZerosInARow; i++) {
-        var searchStr = newArray(i + 3, 1);
+        var searchStr = newArray([i + 3], 1);
         ArrayUtils.setRangeTo(searchStr, 1, -1, 0);
         var subLen = searchStr.length;
 
@@ -458,7 +460,7 @@ ScalarEncoder.prototype.decode = function(encoded, parentFieldName) { // DecodeR
 
     // ------------------------------------------------------------------------
     // Find each run of 1's.
-    var nz = ArrayUtils.where(tmpOutput, function {
+    var nz = ArrayUtils.where(tmpOutput, function(n) {
         return n > 0;
     });
     var runs = []; //will be tuples of (startIdx, runLength)
@@ -498,7 +500,8 @@ ScalarEncoder.prototype.decode = function(encoded, parentFieldName) { // DecodeR
     var left = 0;
     var right = 0;
     var ranges = [];
-    for (var tupleRun in runs) {
+    for (var i = 0; i < runs.kength; i++) {
+        var tupleRun = runs[i];
         var start = tupleRun.get(0);
         var runLen = tupleRun.get(1);
         if (runLen <= this.getW()) {
@@ -560,7 +563,7 @@ ScalarEncoder.prototype.decode = function(encoded, parentFieldName) { // DecodeR
 
     var inner = new RangeList(ranges, desc);
     var fieldsDict = new Map(); // new WeakMap();
-    fieldsDict.put(fieldName, inner);
+    fieldsDict.set(fieldName, inner);
 
     return new DecodeResult(fieldsDict, [fieldName]);
 };
@@ -595,7 +598,7 @@ ScalarEncoder.prototype.generateRangeDescription = function(ranges) { // String(
  * @param c		the connections memory
  * @return		the internal topDownMapping
  */
-ScalarEncoder.prototype.getTopDownMapping: function() { // SparseObjectMatrix<int[]>(void)
+ScalarEncoder.prototype.getTopDownMapping = function() { // SparseObjectMatrix<int[]>(void)
 
     if (isNullOrUndefined(this.topDownMapping)) {
         //The input scalar value corresponding to each possible output encoding
@@ -617,7 +620,7 @@ ScalarEncoder.prototype.getTopDownMapping: function() { // SparseObjectMatrix<in
     this.setTopDownMapping(topDownMapping);
 
     var topDownValues = this.getTopDownValues();
-    var outputSpace = newArray(this.getN(), 0);
+    var outputSpace = newArray([this.getN()], 0);
     var minVal = this.getMinVal();
     var maxVal = this.getMaxVal();
     for (var i = 0; i < numCategories; i++) {
@@ -625,7 +628,7 @@ ScalarEncoder.prototype.getTopDownMapping: function() { // SparseObjectMatrix<in
         value = Math.max(value, minVal);
         value = Math.min(value, maxVal);
         this.encodeIntoArray(value, outputSpace);
-        this.topDownMapping.set(i, copyOf(outputSpace, outputSpace.length));
+        this.topDownMapping.set(i, copyOf(outputSpace, "array"));
     }
 
     return topDownMapping;
@@ -743,26 +746,26 @@ ScalarEncoder.prototype.dict = function() { // List<Tuple>(void)
  *
  * @see ScalarEncoder.Builder#setStuff(int)
  */
-var Builder = function() {
-    Encoder.Builder.call(this);
+ScalarEncoder.prototype.Builder = function() {
+    Encoder.prototype.Builder.call(this);
+
+    this.build = function() {
+        //Must be instantiated so that super class can initialize
+        //boilerplate variables.
+        this.encoder = new ScalarEncoder();
+
+        //Call super class here
+        Encoder.prototype.Builder.build.call(this);
+
+        ////////////////////////////////////////////////////////
+        //  Implementing classes would do setting of specific //
+        //  vars here together with any sanity checking       //
+        ////////////////////////////////////////////////////////
+
+        this.encoder.init();
+        return this.encoder;
+    }
 };
 
-Builder.prototype = Object.create(Encoder.Builder.prototype);
-Builder.prototype.constructor = Builder;
-
-Builder.prototype.build = function() {
-    //Must be instantiated so that super class can initialize
-    //boilerplate variables.
-    this.encoder = new ScalarEncoder();
-
-    //Call super class here
-    Encoder.Builder.build();
-
-    ////////////////////////////////////////////////////////
-    //  Implementing classes would do setting of specific //
-    //  vars here together with any sanity checking       //
-    ////////////////////////////////////////////////////////
-
-    this.encoder.init();
-    return this.encoder;
-};
+ScalarEncoder.prototype.Builder.prototype = Object.create(Encoder.prototype.Builder);
+ScalarEncoder.prototype.Builder.constructor = ScalarEncoder.prototype.Builder;

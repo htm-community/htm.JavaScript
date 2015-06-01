@@ -10,7 +10,7 @@
 var Segment = function() {};
 
 Segment.prototype = {
-	/**
+    /**
      * Creates and returns a newly created {@link Synapse} with the specified
      * source cell, permanence, and index.
      * 
@@ -31,7 +31,7 @@ Segment.prototype = {
      * 
      * @return
      */
-    createSynapse: function(c, syns, sourceCell, pool, index, inputIndex) {	// Synapse(Connections, List<Synapse>, Cell, Pool, int, int)
+    createSynapse: function(c, syns, sourceCell, pool, index, inputIndex) { // Synapse(Connections, List<Synapse>, Cell, Pool, int, int)
         var s = new Synapse(c, sourceCell, this, pool, index, inputIndex);
         syns.push(s);
         return s;

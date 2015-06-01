@@ -40,7 +40,7 @@ DistalDendrite.prototype.getParentCell = function() { // Cell(void)
  */
 DistalDendrite.prototype.createSynapse = function(c, sourceCell, permanence, index) { // Synapse(Connections, Cell, double, int)
     var pool = new Pool(1);
-    var s = Segment.prototype.createSynapse.call(this, (c, c.getSynapses(this), sourceCell, pool, index, sourceCell.getIndex()));
+    var s = Segment.prototype.createSynapse.call(this, c, c.getSynapses(this), sourceCell, pool, index, sourceCell.getIndex());
     pool.setPermanence(c, s, permanence);
     return s;
 }
@@ -70,7 +70,7 @@ DistalDendrite.prototype.getConnectedActiveSynapses = function(activeSynapsesFor
         return this.EMPTY_SYNAPSE_SET;
     }
 
-    for (var s in activeSynapsesForSegment.get(this)) {
+    for (var s of activeSynapsesForSegment.get(this)) {
         if (s.getPermanence() >= permanenceThreshold) {
             if (isNullOrUndefined(connectedSynapses)) {
                 connectedSynapses = new Set();
@@ -138,7 +138,7 @@ DistalDendrite.prototype.pickCellsToLearnOn = function(c, numPickCells, prevWinn
 
     var cells = new Set();
     for (var x = 0; x < numPickCells; x++) {
-        var i = random.nextInt(cands.size);
+        var i = random.nextInt(cands.length);
         cells.add(cands[i]);
         cands.splice(i, 1);
     }

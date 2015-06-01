@@ -38,8 +38,24 @@ Tuple.prototype = {
         var str = "[\n";
         for (var i = 0; i < this.container.length; i++) {
             str += "\t{";
-            for (var key in this.container[i]) {
-                str += key.toString() + ": " + this.container[i][key].toString() + ", ";
+            if (container[i] instanceof Set) {
+                var index = 0;
+                for (var key of this.container[i]) {
+                    str += index.toString() + ": " + key.toString() + ", ";
+                    index++;
+                }
+            } else if (container[i] instanceof Map) {
+                for (var key of this.container[i].keys()) {
+                    str += key.toString() + ": " + container[i].get(key).toString() + ", ";
+                }
+            } else if (container[i] instanceof Array) {
+                for (var j = 0; j < container[i].length; j++) {
+                    str += j.toString() + ": " + container[i][j].toString() + ", ";
+                }
+            } else {
+                for (var key in this.container[i]) {
+                    str += key.toString() + ": " + this.container[i][key].toString() + ", ";
+                }
             }
             str = str.substr(0, str.length - 2);
             if (i < this.container.length - 1) {

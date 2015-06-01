@@ -369,8 +369,8 @@ SpatialPooler.prototype = {
      * @return
      */
     avgColumnsPerInput: function(c) { // double(Connections c)
-        var colDim = copyOf(c.getColumnDimensions());
-        var inputDim = copyOf(c.getInputDimensions());
+        var colDim = copyOf(c.getColumnDimensions(), "array");
+        var inputDim = copyOf(c.getInputDimensions(), "array");
         var columnsPerInput = ArrayUtils.divide(colDim, inputDim, 0, 0);
         return ArrayUtils.average(columnsPerInput);
     },
@@ -604,7 +604,7 @@ SpatialPooler.prototype = {
 
         var perm = newArray([c.getNumInputs()], 0);
         for (var i = 0; i < potentialPool.length; i++) {
-            var idx = parseInt(potentialPool[i]);
+            var idx = Math.floor(potentialPool[i]);
             if (pick.has(idx)) {
                 perm[idx] = this.initPermConnected(c);
             } else {
@@ -839,7 +839,7 @@ SpatialPooler.prototype = {
      * @return
      */
     inhibitColumns: function(c, overlaps) { // int[](Connections c, double[] overlaps)
-        overlaps = copyOf(overlaps);
+        overlaps = copyOf(overlaps, "array");
 
         var density;
         var inhibitionArea;

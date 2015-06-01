@@ -8,7 +8,7 @@ var ArrayUtils = {
     EMPTY_ARRAY: [],
 
     WHERE_1: function(i) {
-        return i == 1;
+        return i === 1;
     },
 
     GREATER_THAN_0: function(i) {
@@ -106,7 +106,7 @@ var ArrayUtils = {
     concat: function(first, second) { // double[](double[], double[])
         var flen = first.length,
             slen = second.length;
-        var retVal = copyOf(first);
+        var retVal = copyOf(first, "array");
 
         for (var i = flen, j = 0; i < flen + slen; i++, j++) {
             retVal[i] = second[j];
@@ -1469,7 +1469,7 @@ var ArrayUtils = {
     /*
 	// no explicit parameter rest
 	concatAll: function(first) {	// int[](int[], int[]...) or T[](T[], T[]...)
-		var result = copyOf(first);
+		var result = copyOf(first, "array");
 		var i = 1;
 		while (!(arguments[i] === undefined)) {
         	result = result.concat(arguments[i++]);
@@ -1479,7 +1479,7 @@ var ArrayUtils = {
 
     // rest must be an array
     concatAll: function(first, rest) { // int[](int[], int[]...) or T[](T[], T[]...)
-        var result = copyOf(first);
+        var result = copyOf(first, "array");
         for (var i = 0; i < rest.length; i++) {
             result = result.concat(rest[i]);
         }

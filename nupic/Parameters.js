@@ -6,7 +6,7 @@ var Parameters = function() {
         'seed': 'seed',
         'random': 'random',
         'COLUMN_DIMENSIONS': 'columnDimensions',
-        'CELLS_PER_COLUMN': 'cellsPerColumns',
+        'CELLS_PER_COLUMN': 'cellsPerColumn',
         'ACTIVATION_THRESHOLD': 'activationThreshold',
         'LEARNING_RADIUS': 'learningRadius',
         'MIN_THRESHOLD': 'minThreshold',
@@ -40,11 +40,7 @@ var Parameters = function() {
         'seed': 42
     };
 
-    var mt = new MersenneTwister(this.DEFAULTS_ALL['seed']);
-
-    this.DEFAULTS_ALL['random'] = function() {
-        return mt.nextDouble();
-    };
+    this.DEFAULTS_ALL['random'] = new MersenneTwister(this.DEFAULTS_ALL['seed']);
 
     this.DEFAULTS_TEMPORAL = {
         'COLUMN_DIMENSIONS': [],

@@ -73,12 +73,12 @@ Column.prototype = {
      * @return
      */
     getLeastUsedCell: function(c, random) { //Cell(Connections c, Random random)		
-        var cells = getCells();
+        var cells = this.getCells();
         var leastUsedCells = [];
         var minNumSegments = Number.MAX_VALUE;
 
-        for (var cell in cells) {
-            var numSegments = cell.getSegments(c).length;
+        for (var i = 0; i < cells.length; i++) {
+            var numSegments = cells[i].getSegments(c).length;
 
             if (numSegments < minNumSegments) {
                 minNumSegments = numSegments;
@@ -86,7 +86,7 @@ Column.prototype = {
             }
 
             if (numSegments === minNumSegments) {
-                leastUsedCells.push(cell);
+                leastUsedCells.push(cells[i]);
             }
         }
 
@@ -153,4 +153,4 @@ Column.prototype = {
     toString: function() { // String toString(void)
         return "Column: idx=" + this.index;
     }
-};
+}

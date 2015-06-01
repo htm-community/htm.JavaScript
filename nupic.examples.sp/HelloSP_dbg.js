@@ -11,7 +11,6 @@
  */
 var HelloSP = function(inputDimensions, columnDimensions) {
 
-    this.parameters = null;
     this.inputArray = [];
     this.activeArray = [];
     this.inputSize = 1;
