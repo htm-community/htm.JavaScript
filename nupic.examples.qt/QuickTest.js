@@ -158,11 +158,11 @@ QuickTest.prototype.LayerImpl.prototype = {
                 break;
         }
 
-        if (recordNum === 1) {
+        //if (recordNum === 1) {
             this.theNum++;
             postMessage("<p>--------------------------------------------------------</p>");
             postMessage("<p>Iteration: " + this.theNum + "</p>");
-        }
+        //}
         postMessage("<p>===== " + recordOut + "  - Sequence Num: " + sequenceNum + " =====</p>");
 
         var output = newArray([this.columnCount], 0);

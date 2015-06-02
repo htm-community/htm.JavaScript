@@ -28,7 +28,7 @@ var BitHistory = function() {
     /**
      * Package protected constructor for serialization purposes.
      */
-    var BitHistory_void = function() {} // (void)
+    var BitHistory_void = function() {}; // (void)
 
     /**
      * Constructs a new {@code BitHistory}

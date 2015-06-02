@@ -10,8 +10,10 @@
         window.onload = function() {
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
                 document.getElementById("progress").innerHTML = "Running QuickTest Demo ...";
-
-                var timer = setInterval(function() {
+                
+                var tmp = "";
+				var cnt = 0;
+				var timer = setInterval(function() {
                     document.getElementById("progress").innerHTML += ".";
                 }, 1000);
 
@@ -23,7 +25,14 @@
                         clearInterval(timer);
                     } else {
                         var el = document.getElementById("result");
-                        el.innerHTML = el.innerHTML + event.data;
+                        if (event.data.indexOf("----------") > -1 && cnt % 10 === 1) {
+						    el.innerHTML = tmp;
+							tmp = "";
+							cnt = 0;
+						} else {
+							tmp += event.data;
+							cnt++;
+						}
                         var body = document.getElementsByTagName("body")[0];
                         body.scrollTop = body.scrollHeight;
                     }
