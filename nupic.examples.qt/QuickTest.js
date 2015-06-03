@@ -48,6 +48,10 @@ QuickTest.prototype = {
                 tm.reset(layer.getMemory());
             }
             this.runThroughLayer(layer, i, i, x);
+			
+		    if (x === 9999) {
+		        postMessage("done");
+		    }
         }
     },
 

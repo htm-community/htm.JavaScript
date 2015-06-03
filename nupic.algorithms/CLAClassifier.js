@@ -167,24 +167,24 @@ CLAClassifier.prototype = {
             }
 
             var actValues = newArray([this.actualValues.length], 0);
-            for (var i=0; i<this.actualValues.length; i++) {
+            for (var i = 0; i < this.actualValues.length; i++) {
                 actValues[i] = isNullOrUndefined(this.actualValues[i]) ? defaultValue : this.actualValues[i];
             }
 
             retVal.setActualValues(actValues);
 
             // For each n-step prediction...
-            for (var i=0; i<this.steps.length; i++) {
+            for (var i = 0; i < this.steps.length; i++) {
                 var nSteps = this.steps[i];
                 // Accumulate bucket index votes and actValues into these arrays
                 var sumVotes = newArray([this.maxBucketIdx + 1], 0);
                 var bitVotes = newArray([this.maxBucketIdx + 1], 0);
 
-                for (var j=0; j<patternNZ.length; j++) {
+                for (var j = 0; j < patternNZ.length; j++) {
                     var bit = patternNZ[j];
-					var t = new Tuple(bit, nSteps);	// just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
-					var key = t.hashCode();	
-					var history = this.activeBitHistory.get(key);
+                    var t = new Tuple(bit, nSteps); // just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
+                    var key = t.hashCode();
+                    var history = this.activeBitHistory.get(key);
                     if (isNullOrUndefined(history)) {
                         continue;
                     }
@@ -229,15 +229,9 @@ CLAClassifier.prototype = {
             // not, it must be a category, in which case each bucket only ever
             // sees one category so we don't need a running average.
             while (this.maxBucketIdx > this.actualValues.length - 1) {
-                if (actValue instanceof Object) {
-					this.actualValues.push(null);
-				} else if (typeof actualValue === "string") {
-					this.actualValues.push("");
-				} else {
-					this.actualValues.push(0);
-				}
+                this.actualValues.push(null);
             }
-            if (isNullOrUndefined(this.actualValues[bucketIdx]) || this.actualValues[bucketIdx] === "" || this.actualValues[bucketIdx] === 0) {
+            if (isNullOrUndefined(this.actualValues[bucketIdx])) {
                 this.actualValues[bucketIdx] = actValue;
             } else {
                 if (typeof actValue === "number") {
@@ -280,11 +274,11 @@ CLAClassifier.prototype = {
 
                 // Store classification info for each active bit from the pattern
                 // that we got nSteps time steps ago.
-                for (var i = 0; i < learnPatternNZ.length; i++) {
-                    var bit = learnPatternNZ[i];
+                for (var j = 0; j < learnPatternNZ.length; j++) {
+                    var bit = learnPatternNZ[j];
                     // Get the history structure for this bit and step
-					var t = new Tuple(bit, nSteps);	// just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
-					var key = t.hashCode();	
+                    var t = new Tuple(bit, nSteps); // just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
+                    var key = t.hashCode();
                     var history = this.activeBitHistory.get(key);
                     if (isNullOrUndefined(history)) {
                         this.activeBitHistory.set(key, history = new BitHistory(this, bit, nSteps));

@@ -1,5 +1,5 @@
 /**
- * Temporal Memory implementation in Java
+ * Temporal Memory implementation in JavaScript
  * 
  * @author Chetan Surpur
  * @author David Ray

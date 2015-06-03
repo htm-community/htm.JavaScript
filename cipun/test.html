@@ -1,16 +1,38 @@
 <script src="./util.js"></script>
 <script src="./webtoolkit.md5.js"></script>
 <script src="../nupic.util/Deque.js"></script>
+<script src="../nupic.util/Tuple.js"></script>
 
 <script>
 
-var bH = new Map();
-var key = HashCode.value(new Array([1, 2, 3, 4]));
-bH.set(key, "OK");
-key = HashCode.value(new Array([1, 2, 3, 4]));
-console.log(bH.get(key));
+var m = new Map();
 
-console.log(bH.set([1,2], "KO"));
-console.log(bH.get([1,2]));
+var k1 = new Tuple(1, 2);
+var k2 = new Tuple(1, 2);
+var k3 = [1, 2];
+var k4 = [1, 2];
+
+m.set(k1, "X");
+m.set(k2, "Y");
+m.set(k3, "U");
+m.set(k4, "V");
+
+// this destroys the entries, w/o it, it works
+var k5 = new Tuple(1, 2);
+var k6 = new Tuple(1, 2);
+
+console.log(m.get(k1));
+console.log(m.get(k2));
+console.log(m.get(k3));
+console.log(m.get(k4));
+console.log(m.get(k5));
+console.log(m.get(k6));
+console.log(m.get([1, 2]));
+
+var bH = new Map();
+var k1 = HashCode.value(new Array([1, 2, 3, 4]));
+bH.set(k1, "OK");
+var k2 = HashCode.value(new Array([1, 2, 3, 4]));
+console.log(bH.get(k2));
 
 </script>

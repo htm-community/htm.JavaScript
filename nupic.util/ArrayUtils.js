@@ -834,7 +834,7 @@ var ArrayUtils = {
     },
 
     /**
-     * Another utility to account for the difference between Python and Java.
+     * Another utility to account for the difference between Python and JavaScript (?).
      * Here the modulo operator is defined differently.
      *
      * @param n

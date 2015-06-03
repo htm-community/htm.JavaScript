@@ -343,7 +343,7 @@ Connections.prototype = {
      * Sets the input column mapping matrix
      * @param matrix
      */
-    setInputMatrix: function(matrix) { // Java void(SparseMatrix<?>)
+    setInputMatrix: function(matrix) { // void(SparseMatrix<?>)
         this.inputMatrix = matrix;
     },
 
@@ -367,7 +367,7 @@ Connections.prototype = {
      * Returns the product of the input dimensions 
      * @return  the product of the input dimensions 
      */
-    getNumInputs: function() { // Java int(void)
+    getNumInputs: function() { // int(void)
         return this.numInputs;
     },
 
