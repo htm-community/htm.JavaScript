@@ -43,7 +43,7 @@ QuickTest.prototype = {
 
         var layer = this.getLayer(params, encoder, sp, tm, classifier);
 
-        for (var i = 1, x = 0; x < 10000; i = (i == 7 ? 1 : i + 1), x++) { // USE "X" here to control run length
+        for (var i = 1, x = 0; x < 10000; i = (i === 7 ? 1 : i + 1), x++) { // USE "X" here to control run length
             if (i === 1) {
                 tm.reset(layer.getMemory());
             }

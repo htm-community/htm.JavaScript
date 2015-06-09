@@ -7,49 +7,61 @@
     <meta name="description" content="This program uses a JavaScript web worker to run the HTM QuickTest demo">
     <meta name="keywords" content="Hierarchical Temporal Memory, Cortical Learning Algorithm, HTM, CLA, NuPIC, Spatial Pooler, Temporal Memory">
     <script>
+		var qtWorker = null;
+		var timer = null;
+		
         window.onload = function() {
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                document.getElementById("progress").innerHTML = "Running QuickTest Demo ...";
-                
-                var tmp = "";
-				var cnt = 0;
-				var timer = setInterval(function() {
-                    document.getElementById("progress").innerHTML += ".";
-                }, 1000);
+			    document.getElementById("start").onclick = function() {
+                    document.getElementById("progress").innerHTML = "Running QuickTest Demo ...";
 
-                var qtWorker = new Worker("./nupic.examples.qt/QuickTest.js");
+                    var tmp = "";
+                    var cnt = 0;
+                    timer = setInterval(function() {
+                        document.getElementById("progress").innerHTML += ".";
+                    }, 1000);
 
-                qtWorker.onmessage = function(event) {
-                    if (event.data === "done") {
-                        document.getElementById("progress").innerHTML += " done";
+                    qtWorker = new Worker("./nupic.examples.qt/QuickTest.js");
+
+                    qtWorker.onmessage = function(event) {
+                        if (event.data === "done") {
+                            document.getElementById("progress").innerHTML += " done";
+                            clearInterval(timer);
+                        } else {
+                            var el = document.getElementById("result");
+                            if (event.data.indexOf("----------") > -1 && cnt % 10 === 1) {
+                                el.innerHTML = tmp;
+                                tmp = "";
+                                cnt = 0;
+                            } else {
+                                tmp += event.data;
+                                cnt++;
+                            }
+                            var body = document.getElementsByTagName("body")[0];
+                            body.scrollTop = body.scrollHeight;
+                        }
+                    };
+
+                    qtWorker.onerror = function(event) {
+                        document.getElementById("error").innerHTML = event.message + " (" + event.filename + ":" + event.lineno + ")";
+                        this.terminate();
                         clearInterval(timer);
-                    } else {
-                        var el = document.getElementById("result");
-                        if (event.data.indexOf("----------") > -1 && cnt % 10 === 1) {
-						    el.innerHTML = tmp;
-							tmp = "";
-							cnt = 0;
-						} else {
-							tmp += event.data;
-							cnt++;
-						}
-                        var body = document.getElementsByTagName("body")[0];
-                        body.scrollTop = body.scrollHeight;
-                    }
-                };
+                    };
 
-                qtWorker.onerror = function(event) {
-                    document.getElementById("error").innerHTML = event.message + " (" + event.filename + ":" + event.lineno + ")";
-                    this.terminate();
-                    clearInterval(timer);
-                };
-
-                qtWorker.postMessage({
-                    url: window.location.protocol + "//" + window.location.host + window.location.pathname
-                });
+                    qtWorker.postMessage({
+                        action: "start",
+                        url: window.location.protocol + "//" + window.location.host + window.location.pathname
+                    });
+                } 
             } else {
                 document.getElementById("progress").innerHTML = "Sorry, but this JavaScript program requires Firefox.";
             }
+
+            document.getElementById("stop").onclick = function() {
+                qtWorker.terminate();
+				document.getElementById("progress").innerHTML += " done";
+				clearInterval(timer);
+            };
         }
     </script>
 </head>
@@ -58,6 +70,9 @@
     <div id="progress"></div>
     <div id="result"></div>
     <div id="error" style="color:#ff0000; font-weight:bold;"></div>
+    <div>
+        <input id="start" type="button" value="Start" />
+		<input id="stop" type="button" value="Stop" />
 </body>
 
 </html>

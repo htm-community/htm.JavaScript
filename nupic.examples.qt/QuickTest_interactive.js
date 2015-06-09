@@ -14,44 +14,42 @@
  * @author cogmission
  * @author Ralf Seliger (port to JavaScript)
  */
-var QuickTest = function() {};
+var QuickTest = function(gui) {
+    this.gui = gui;
+    this.sequenceNum = 0;
+    this.params = this.getParameters();
+    console.log(this.params);
+
+    //Layer components
+    this.dayBuilder =
+        ScalarEncoder.prototype.builder()
+        .n(8)
+        .w(3)
+        .radius(1.0)
+        .minVal(1.0)
+        .maxVal(8)
+        .periodic(true)
+        .forced(true)
+        .resolution(1);
+    this.encoder = this.dayBuilder.build();
+    this.sp = new SpatialPooler();
+    this.tm = new TemporalMemory();
+    this.classifier = new CLAClassifier(newArray([1], 1), 0.1, 0.3, 0);
+
+    this.layer = this.getLayer(this.params, this.encoder, this.sp, this.tm, this.classifier);
+};
 
 QuickTest.prototype = {
 
-    /**
-     * @param args the command line arguments
-     */
-    main: function(args) { // void(String[])
-        var params = this.getParameters();
-        console.log(params);
+    processInput: function(i) {
+        if (i === 1) {
+            this.tm.reset(this.layer.getMemory());
+        }
+        this.runThroughLayer(this.layer, i, i, this.sequenceNum++);
 
-        //Layer components
-        var dayBuilder =
-            ScalarEncoder.prototype.builder()
-            .n(8)
-            .w(3)
-            .radius(1.0)
-            .minVal(1.0)
-            .maxVal(8)
-            .periodic(true)
-            .forced(true)
-            .resolution(1);
-        var encoder = dayBuilder.build();
-        var sp = new SpatialPooler();
-        var tm = new TemporalMemory();
-        var classifier = new CLAClassifier(newArray([1], 1), 0.1, 0.3, 0);
-
-        var layer = this.getLayer(params, encoder, sp, tm, classifier);
-
-        for (var i = 1, x = 0; x < 10000; i = (i === 7 ? 1 : i + 1), x++) { // USE "X" here to control run length
-            if (i === 1) {
-                tm.reset(layer.getMemory());
-            }
-            this.runThroughLayer(layer, i, i, x);
-			
-		    if (x === 9999) {
-		        postMessage("done");
-		    }
+        // Coupling to GUI Control
+        if (this.gui.exampleIsRunning) {
+            this.gui.prepareNextInput();
         }
     },
 
@@ -98,7 +96,7 @@ QuickTest.prototype = {
     },
 
     getLayer: function(p, e, s, t, c) { // Layer<Double>(Parameters, ScalarEncoder, SpatialPooler, TemporalMemory, CLAClassifier)	
-        var l = new this.LayerImpl(p, e, s, t, c);
+        var l = new this.LayerImpl(this.gui, p, e, s, t, c);
         return l;
     }
 };
@@ -112,7 +110,8 @@ QuickTest.prototype = {
  * @author Ralf Seliger (port to JavaScript)
  *
  */
-QuickTest.prototype.LayerImpl = function(p, e, s, t, c) { // LayerImpl(Parameters, ScalarEncoder, SpatialPooler, TemporalMemory, CLAClassifier)
+QuickTest.prototype.LayerImpl = function(gui, p, e, s, t, c) { // LayerImpl(Parameters, ScalarEncoder, SpatialPooler, TemporalMemory, CLAClassifier)
+    this.gui = gui;
     this.memory = new Connections();
     this.classification = new Map(); // Map<String, Object> classification = new LinkedHashMap<String, Object>();
     this.theNum = 0;
@@ -163,23 +162,23 @@ QuickTest.prototype.LayerImpl.prototype = {
         }
 
         //if (recordNum === 1) {
-            this.theNum++;
-            postMessage("<p>--------------------------------------------------------</p>");
-            postMessage("<p>Iteration: " + this.theNum + "</p>");
+        this.theNum++;
+        this.gui.log("--------------------------------------------------------");
+        this.gui.log("Iteration: " + this.theNum);
         //}
-        postMessage("<p>===== " + recordOut + "  - Sequence Num: " + sequenceNum + " =====</p>");
+        this.gui.log("===== " + recordOut + "  - Sequence Num: " + sequenceNum + " =====");
 
         var output = newArray([this.columnCount], 0);
 
         //Input through encoder
-        postMessage("<p>ScalarEncoder Input = " + value + "</p>");
+        this.gui.log("ScalarEncoder Input = " + value);
         var encoding = this.encoder.encode(value);
-        postMessage("<p>ScalarEncoder Output = " + encoding.toString() + "</p>");
+        this.gui.log("ScalarEncoder Output = " + encoding.toString());
         var bucketIdx = this.encoder.getBucketIndices(value)[0];
 
         //Input through spatial pooler
         this.spatialPooler.compute(this.memory, encoding, output, true, true);
-        postMessage("<p>SpatialPooler Output = " + output.toString() + "</p>");
+        this.gui.log("SpatialPooler Output = " + output.toString());
 
         //Input through temporal memory
         var input = this.actual = ArrayUtils.where(output, ArrayUtils.WHERE_1);
@@ -188,14 +187,16 @@ QuickTest.prototype.LayerImpl.prototype = {
             this.lastPredicted = copyOf(this.predictedColumns, "array");
         }
         this.predictedColumns = this.getSDR(cc._predictiveCells()); //Get the active column indexes
-        postMessage("<p>TemporalMemory Input = " + input.toString() + "</p>");
+        this.gui.log("TemporalMemory Input = " + input.toString());
+        this.gui.log("TemporalMemory Prediction = " + this.predictedColumns.toString());
 
         this.classification.set("bucketIdx", bucketIdx);
         this.classification.set("actValue", value);
         var result = this.classifier.compute(recordNum, this.classification, this.predictedColumns, true, true);
 
-        postMessage("<p>TemporalMemory Prediction = " + this.predictedColumns.toString() + "  |  CLAClassifier 1 step prob = " + result.getStats(1).toString() + "</p>");
-        postMessage("<p></p>");
+        this.gui.log("  |  CLAClassifier 1 step prob = " + result.getStats(1).toString() + "\n");
+
+        this.gui.log("");
     },
 
     inflateSDR: function(SDR, len) { // int[](int[], int)
@@ -255,56 +256,3 @@ QuickTest.prototype.LayerImpl.prototype = {
         return this.memory;
     }
 };
-
-onmessage = function(event) {
-    switch (event.data.action) {
-		case "start":
-			var url = event.data.url;
-
-			if (url.charAt(url.length - 1) !== "/") {
-				url = url.slice(0, url.lastIndexOf("/") + 1);
-			}
-
-			importScripts(
-				url + "cipun/webtoolkit.md5.js",
-				url + "cipun/util.js",
-				url + "nupic/Connections.js",
-				url + "nupic/Parameters.js",
-				url + "nupic.algorithms/BitHistory.js",
-				url + "nupic.algorithms/CLAClassifier.js",
-				url + "nupic.algorithms/ClassifierResult.js",
-				url + "nupic.util/MersenneTwister.js",
-				url + "nupic.util/MinMax.js",
-				url + "nupic.util/ArrayUtils.js",
-				url + "nupic.util/Tuple.js",
-				url + "nupic.util/Deque.js",
-				url + "nupic.util/RangeTuple.js",
-				url + "nupic.util/DecodeTuple.js",
-				url + "nupic.util/SparseMatrix.js",
-				url + "nupic.util/SparseBinaryMatrix.js",
-				url + "nupic.util/SparseObjectMatrix.js",
-				url + "nupic.encoders/RangeList.js",
-				url + "nupic.encoders/DecodeResult.js",
-				url + "nupic.encoders/EncoderResult.js",
-				url + "nupic.encoders/EncoderTuple.js",
-				url + "nupic.encoders/Encoder.js",
-				url + "nupic.encoders/ScalarEncoder.js",
-				url + "nupic.model/Column.js",
-				url + "nupic.model/Cell.js",
-				url + "nupic.model/Column.js",
-				url + "nupic.model/Segment.js",
-				url + "nupic.model/ProximalDendrite.js",
-				url + "nupic.model/DistalDendrite.js",
-				url + "nupic.model/Pool.js",
-				url + "nupic.model/Synapse.js",
-				url + "nupic.research/ComputeCycle.js",
-				url + "nupic.research/SpatialPooler.js",
-				url + "nupic.research/TemporalMemory.js"
-			);
-
-			var example = new QuickTest();
-
-			example.main([]);
-			break;
-	}
-}

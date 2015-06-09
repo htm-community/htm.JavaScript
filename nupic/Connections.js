@@ -312,6 +312,10 @@ Connections.prototype = {
         return this.random;
     },
 
+    /**
+     * Sets the random number generator.
+     * @param random
+     */
     setRandom: function(random) { // void(Random)
         this.random = random;
     },
@@ -371,6 +375,11 @@ Connections.prototype = {
         return this.numInputs;
     },
 
+    /**
+     * Sets the product of the input dimensions to
+     * establish a flat count of bits in the input field.
+     * @param n
+     */
     setNumInputs: function(n) { // void(int)
         this.numInputs = n;
     },
@@ -383,6 +392,11 @@ Connections.prototype = {
         return this.numColumns;
     },
 
+    /**
+     * Sets the product of the column dimensions to be 
+     * the column count.
+     * @param n
+     */
     setNumColumns: function(n) { // void(int)
         this.numColumns = n;
     },
