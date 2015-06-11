@@ -1,16 +1,16 @@
 /**
  * GUI
  */
-var Gui = function(maxBlockCnt) {
+var Gui = function() {
     this.example = null;
-    this.exampleIsRunning = false;
+    this.isRunning = false;
     this.queue = new Queue();
     this.timer = null;
     this.input = 0;
     this.cnt = 0;
-    this.blockCnt = 0;
+    this.blockCnt = 1;
     this.tmp = "";
-    this.maxBlockCnt = maxBlockCnt;
+    this.maxBlockCnt = 0;
 };
 
 Gui.prototype = {
@@ -32,7 +32,7 @@ Gui.prototype = {
         var el = document.getElementById("result");
         if (this.cnt % 10 === 9) {
             el.innerHTML = this.tmp;
-            if (this.blockCnt > this.maxBlockCnt) {
+            if (this.blockCnt >= this.maxBlockCnt) {
                 this.tmp = "";
                 this.blockCnt = 0;
             }
@@ -56,6 +56,7 @@ Gui.prototype = {
     },
 
     initButtons: function() {
+        document.getElementById("maxBlockCnt").disabled = false;
         document.getElementById("init").disabled = false;
         document.getElementById("step").disabled = true;
         document.getElementById("run").disabled = true;
@@ -65,42 +66,42 @@ Gui.prototype = {
     }
 }
 
-var gui = new Gui(30);
+var gui = gui = new Gui();
 
 window.onload = function() {
 
     gui.initButtons();
 
     document.getElementById("init").onclick = function() {
+
+        gui.maxBlockCnt = parseInt(document.getElementById("maxBlockCnt").value);
+        document.getElementById("maxBlockCnt").disabled = true;
+
         document.getElementById("result").innerHTML = "";
-
-        while (gui.queue.dequeue()) {
-            gui.queue.dequeue();
-        }
-
-        gui.timer = setInterval(function() {
-            if (gui.queue.peek() !== undefined) {
-                gui.executeCmd(gui.queue.dequeue());
-            }
-        }, 50);
 
         gui.queue.enqueue({
             action: "init"
         });
 
+        gui.timer = setInterval(function() {
+            if (gui.queue.peek() !== undefined) {
+                gui.executeCmd(gui.queue.dequeue());
+            }
+        }, 4);
+
         document.getElementById("init").disabled = true;
         document.getElementById("step").disabled = false;
         document.getElementById("run").disabled = false;
-		document.getElementById("stop").disabled = false;
+        document.getElementById("stop").disabled = false;
     }
 
     document.getElementById("step").onclick = function() {
-        gui.exampleIsRunning = false;
+        gui.isRunning = false;
         gui.prepareNextInput();
     }
 
     document.getElementById("run").onclick = function() {
-        gui.exampleIsRunning = true;
+        gui.isRunning = true;
         gui.prepareNextInput();
 
         document.getElementById("run").disabled = true;
@@ -110,7 +111,7 @@ window.onload = function() {
     }
 
     document.getElementById("pause").onclick = function() {
-        gui.exampleIsRunning = false;
+        gui.isRunning = false;
 
         document.getElementById("pause").disabled = true;
         document.getElementById("step").disabled = false;
@@ -119,7 +120,7 @@ window.onload = function() {
     }
 
     document.getElementById("continue").onclick = function() {
-        gui.exampleIsRunning = true;
+        gui.isRunning = true;
         gui.prepareNextInput();
 
         document.getElementById("pause").disabled = false;
@@ -129,11 +130,16 @@ window.onload = function() {
     }
 
     document.getElementById("stop").onclick = function() {
-        gui.exampleIsRunning = false;
+        gui.isRunning = false;
         clearInterval(gui.timer);
+
+        while (gui.queue.dequeue()) {
+            gui.queue.dequeue();
+        }
+
         gui.input = 0;
         gui.cnt = 0;
-        gui.blockCnt = 0;
+        gui.blockCnt = 1;
         gui.tmp = "";
 
         gui.initButtons();

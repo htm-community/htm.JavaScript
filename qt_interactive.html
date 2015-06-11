@@ -45,10 +45,12 @@
     <script src="./nupic.examples.qt/QuickTest_interactive.js"></script>
 </head>
 
-<body style="font-family:monospace;">
-    <div id="result"></div>
+<body style="font-family:monospace; background-color:#ccc">
+    <div id="result" style="margin-bottom:60px;"></div>
     <div id="error" style="color:#ff0000; font-weight:bold;"></div>
-    <div>
+    <div style="position:fixed; bottom:10px;">
+        <hr> Refresh view after
+        <input id="maxBlockCnt" type="text" value=50 size=3 style="text-align:right;" /> iterations.
         <input id="init" type="button" value="Initialize" />
         <input id="step" type="button" value="Single Step" />
         <input id="run" type="button" value="Run" />

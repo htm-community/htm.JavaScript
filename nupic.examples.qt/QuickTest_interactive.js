@@ -48,7 +48,7 @@ QuickTest.prototype = {
         this.runThroughLayer(this.layer, i, i, this.sequenceNum++);
 
         // Coupling to GUI Control
-        if (this.gui.exampleIsRunning) {
+        if (this.gui.isRunning) {
             this.gui.prepareNextInput();
         }
     },

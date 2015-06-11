@@ -1,5 +1,5 @@
 /**
- * 
+ * TODO: Implement range checking (see Parameters.java)
  */
 var Parameters = function() {
     this.KEY_MAP = {
@@ -7,6 +7,7 @@ var Parameters = function() {
         'random': 'random',
         'COLUMN_DIMENSIONS': 'columnDimensions',
         'CELLS_PER_COLUMN': 'cellsPerColumn',
+		'LEARN': 'learn',
         'ACTIVATION_THRESHOLD': 'activationThreshold',
         'LEARNING_RADIUS': 'learningRadius',
         'MIN_THRESHOLD': 'minThreshold',
@@ -53,7 +54,8 @@ var Parameters = function() {
         'CONNECTED_PERMANENCE': 0.5,
         'PERMANENCE_INCREMENT': 0.10,
         'PERMANENCE_DECREMENT': 0.10,
-        'TM_VERBOSITY': 0
+        'TM_VERBOSITY': 0,
+		'LEARN': true
     };
 
     this.DEFAULTS_SPATIAL = {
@@ -74,8 +76,26 @@ var Parameters = function() {
         'MIN_PCT_ACTIVE_DUTY_CYCLE': 0.001,
         'DUTY_CYCLE_PERIOD': 1000,
         'MAX_BOOST': 10.0,
-        'SP_VERBOSITY': 0
+        'SP_VERBOSITY': 0,
+		'LEARN': true
     };
+	
+	this.DEFAULTS_ENCODER = {
+        'N': 500,
+        'W': 21,
+        'MIN_VAL': 0,
+        'MAX_VAL': 1000,
+        'RADIUS': 21,
+        'RESOLUTION': 1,
+        'PERIODIC': false,
+        'CLIP_INPUT': false,
+        'FORCED': false,
+        'FIELD_NAME': "UNSET",
+        'FIELD_TYPE': "int",
+        'ENCODER': "ScalarEncoder",
+        'FIELD_ENCODING_MAP': new Map(),
+        'AUTO_CLASSIFY': false
+	};
 
     for (var key in this.DEFAULTS_TEMPORAL) {
         this.DEFAULTS_ALL[key] = this.DEFAULTS_TEMPORAL[key];
@@ -83,6 +103,10 @@ var Parameters = function() {
 
     for (var key in this.DEFAULTS_SPATIAL) {
         this.DEFAULTS_ALL[key] = this.DEFAULTS_SPATIAL[key];
+    }
+
+    for (var key in this.DEFAULTS_ENCODER) {
+        this.DEFAULTS_ALL[key] = this.DEFAULTS_ENCODER[key];
     }
 };
 
@@ -97,6 +121,10 @@ Parameters.prototype = {
 
     getSpatialDefaultParameters: function() {
         return this.DEFAULTS_SPATIAL;
+    },
+	
+    getEncoderDefaultParameters: function() {
+        return this.DEFAULTS_ENCODER;	
     },
 
     apply: function(p, c) {
