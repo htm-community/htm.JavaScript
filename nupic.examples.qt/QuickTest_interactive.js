@@ -42,12 +42,12 @@ var QuickTest = function(gui) {
 QuickTest.prototype = {
 
     processInput: function(i) {
-        if (i === 1) {
-            this.tm.reset(this.layer.getMemory());
-        }
+        //if (i === 1) {
+        //    this.tm.reset(this.layer.getMemory());
+        //}
         this.runThroughLayer(this.layer, i, i, this.sequenceNum++);
 
-        // Coupling to GUI Control
+        // Coupling to GUI
         if (this.gui.isRunning) {
             this.gui.prepareNextInput();
         }

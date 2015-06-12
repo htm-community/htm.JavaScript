@@ -1,33 +1,43 @@
 /**
- * GUI
+ * GUI (see also qt_interactive.html):
+ * provides graphical user controls to interact with the QuickTest simulation 
+ * generates input data and passes it to the QuickTest object
+ * gisplays QuickTest results to the browser
  */
 var Gui = function() {
-    this.example = null;
-    this.isRunning = false;
-    this.queue = new Queue();
-    this.timer = null;
-    this.input = 0;
-    this.cnt = 0;
-    this.blockCnt = 1;
-    this.tmp = "";
-    this.maxBlockCnt = 0;
+    this.example = null; // Will contain the QuickTest object
+    this.isRunning = false; // Used for pausing/continuing simulation
+    this.queue = new Queue(); // Queue that contains the commands to be passed to the QuickTest object
+    this.timer = null; // Interval timer checks periodically for actions in the command queue
+    this.input = 0; // Input data to be processed by the QuickTest object
+    this.cnt = 0; // Controls display
+    this.blockCnt = 1; // Controls display
+    this.maxBlockCnt = 0; // Controls display
+    this.tmp = ""; // Controls display
 };
 
 Gui.prototype = {
+
+    /**
+     * Receives a command (@cmd) and initiates the corresponding action 
+     */
     executeCmd: function(cmd) {
         switch (cmd.action) {
-            case "init":
+            case "initialize":
                 this.example = new QuickTest(this);
                 break;
-            case "run":
+            case "process":
                 this.example.processInput(cmd.input);
                 break;
             default:
-                throw new Error("No executable action found in queue.");
+                throw new Error("Action " + cmd.action + " not found in command queue.");
                 break;
         }
     },
 
+    /*
+     * Prepares results (@str) for output in the browser
+     */
     log: function(str) {
         var el = document.getElementById("result");
         if (this.cnt % 10 === 9) {
@@ -46,31 +56,43 @@ Gui.prototype = {
         body.scrollTop = body.scrollHeight;
     },
 
+    /*
+     * Prepares next input and places it into the command queue
+     */
     prepareNextInput: function() {
+        /*
+         * Later, this will be the place to collect and combine the data from other entities and the environment
+         * (Note for future use: queues with timestamped entries)	
+         */
         this.input = (this.input == 7 ? 1 : this.input + 1);
 
         this.queue.enqueue({
-            action: "run",
+            action: "process",
             input: this.input
         });
     },
 
-    initButtons: function() {
+    /*
+     * Initializes GUI controls
+     */
+    initControls: function() {
         document.getElementById("maxBlockCnt").disabled = false;
         document.getElementById("init").disabled = false;
         document.getElementById("step").disabled = true;
         document.getElementById("run").disabled = true;
         document.getElementById("pause").disabled = true;
-        document.getElementById("continue").disabled = true;
         document.getElementById("stop").disabled = true;
     }
 }
 
-var gui = gui = new Gui();
-
+/*
+ * GUI event handlers
+ */
 window.onload = function() {
 
-    gui.initButtons();
+    var gui = new Gui();
+
+    gui.initControls();
 
     document.getElementById("init").onclick = function() {
 
@@ -80,9 +102,12 @@ window.onload = function() {
         document.getElementById("result").innerHTML = "";
 
         gui.queue.enqueue({
-            action: "init"
+            action: "initialize"
         });
 
+        /*
+         * Periodically check the command queue for commands
+         */
         gui.timer = setInterval(function() {
             if (gui.queue.peek() !== undefined) {
                 gui.executeCmd(gui.queue.dequeue());
@@ -104,8 +129,8 @@ window.onload = function() {
         gui.isRunning = true;
         gui.prepareNextInput();
 
-        document.getElementById("run").disabled = true;
         document.getElementById("step").disabled = true;
+        document.getElementById("run").disabled = true;
         document.getElementById("pause").disabled = false;
         document.getElementById("stop").disabled = false;
     }
@@ -113,27 +138,20 @@ window.onload = function() {
     document.getElementById("pause").onclick = function() {
         gui.isRunning = false;
 
-        document.getElementById("pause").disabled = true;
         document.getElementById("step").disabled = false;
-        document.getElementById("continue").disabled = false;
+        document.getElementById("run").disabled = false;
+        document.getElementById("pause").disabled = true;
         document.getElementById("stop").disabled = false;
     }
 
-    document.getElementById("continue").onclick = function() {
-        gui.isRunning = true;
-        gui.prepareNextInput();
-
-        document.getElementById("pause").disabled = false;
-        document.getElementById("step").disabled = true;
-        document.getElementById("continue").disabled = true;
-        document.getElementById("stop").disabled = false;
-    }
-
+    /*
+     * Terminate simualtion and clean up
+     */
     document.getElementById("stop").onclick = function() {
         gui.isRunning = false;
         clearInterval(gui.timer);
 
-        while (gui.queue.dequeue()) {
+        while (gui.queue.peek()) {
             gui.queue.dequeue();
         }
 
@@ -142,6 +160,6 @@ window.onload = function() {
         gui.blockCnt = 1;
         gui.tmp = "";
 
-        gui.initButtons();
+        gui.initControls();
     }
 }

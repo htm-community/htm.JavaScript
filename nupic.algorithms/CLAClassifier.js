@@ -262,7 +262,12 @@ CLAClassifier.prototype = {
                     }
                     iteration = Math.floor(t['value'].get(0));
                     learnPatternNZ = t['value'].get(1);
-                    if (iteration === this.learnIteration - nSteps) {
+                    if (iteration === this.learnIteration - nSteps 
+					    // otherwise bucketIdx = 0 never gets stored =>
+						// correct prediction Sun -> Mon is classified incorrectly =>
+						// need to reset memory on Sunday (QuickTest_interactive.js:46), 
+						// this fix works only for one step prediction, though
+					    || this.learnIteration - nSteps === -1) {	
                         found = true;
                         break;
                     }

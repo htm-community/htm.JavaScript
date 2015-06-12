@@ -12,7 +12,7 @@ Clone or download ZIP
 
 Alternative 1:
 
-Load qt_interactive.html from the file system into Firefox (no web server needed). No web workers are used, so debugging with e.g. Firebug is supported. No browser freeze due to input presentation. This alternative is not available vor HelloSP.
+Choice of loading qt_interactive.html from the file system or via web server into Firefox (for details with respect to web server usage see Alternative 2). No web workers are used, so debugging with e.g. Firebug is supported. No browser freeze due to input presentation. This alternative is not available vor HelloSP.
 
 
 Alternative 2:
@@ -27,7 +27,7 @@ Alternative 2:
 
 3. Load http://localhost/foo/bar/baz/sp.html or http://localhost/foo/bar/baz/qt.html with Firefox 
 
-This alterbative uses web workers to avoid browser freeze, so debugging is difficult.
+This alternative uses web workers to avoid browser freeze. Drawback: web workers make debugging difficult.
 
 
 Alternative 3: 

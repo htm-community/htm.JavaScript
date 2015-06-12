@@ -21,7 +21,7 @@
                         document.getElementById("progress").innerHTML += ".";
                     }, 1000);
 
-                    qtWorker = new Worker("./nupic.examples.qt/QuickTest.js");
+                    qtWorker = new Worker("../nupic.examples.qt/QuickTest.js");
 
                     qtWorker.onmessage = function(event) {
                         if (event.data === "done") {

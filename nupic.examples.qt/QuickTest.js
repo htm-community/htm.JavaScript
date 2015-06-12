@@ -264,6 +264,7 @@ onmessage = function(event) {
 			if (url.charAt(url.length - 1) !== "/") {
 				url = url.slice(0, url.lastIndexOf("/") + 1);
 			}
+			url = url.replace("nupic.examples.qt/", "");
 
 			importScripts(
 				url + "cipun/webtoolkit.md5.js",

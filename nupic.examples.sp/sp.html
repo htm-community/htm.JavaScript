@@ -8,14 +8,15 @@
     <meta name="keywords" content="Hierarchical Temporal Memory, Cortical Learning Algorithm, HTM, CLA, NuPIC, Spatial Pooler, Temporal Memory">
     <script>
         window.onload = function() {
-            if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+			
+			if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
                 document.getElementById("progress").innerHTML = "Running Spatial Pooler Demo ...";
 
                 var timer = setInterval(function() {
                     document.getElementById("progress").innerHTML += ".";
                 }, 1000);
 
-                var spWorker = new Worker("./nupic.examples.sp/HelloSP.js");
+                var spWorker = new Worker("../nupic.examples.sp/HelloSP.js");
 
                 spWorker.onmessage = function(event) {
                     if (event.data === "done") {

@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <title>QuickTest Demo</title>
+    <meta charset="UTF-8">
+    <meta name="author" content="Ralf Seliger">
+    <meta name="description" content="This program uses a JavaScript web worker to run the HTM QuickTest demo">
+    <meta name="keywords" content="Hierarchical Temporal Memory, Cortical Learning Algorithm, HTM, CLA, NuPIC, Spatial Pooler, Temporal Memory">
+    <script src="../cipun/webtoolkit.md5.js"></script>
+    <script src="../cipun/Queue.src.js"></script>
+    <script src="../cipun/util.js"></script>
+    <script src="../nupic/Connections.js"></script>
+    <script src="../nupic/Parameters.js"></script>
+    <script src="../nupic.algorithms/BitHistory.js"></script>
+    <script src="../nupic.algorithms/CLAClassifier.js"></script>
+    <script src="../nupic.algorithms/ClassifierResult.js"></script>
+    <script src="../nupic.util/MersenneTwister.js"></script>
+    <script src="../nupic.util/MinMax.js"></script>
+    <script src="../nupic.util/ArrayUtils.js"></script>
+    <script src="../nupic.util/Tuple.js"></script>
+    <script src="../nupic.util/Deque.js"></script>
+    <script src="../nupic.util/RangeTuple.js"></script>
+    <script src="../nupic.util/DecodeTuple.js"></script>
+    <script src="../nupic.util/SparseMatrix.js"></script>
+    <script src="../nupic.util/SparseBinaryMatrix.js"></script>
+    <script src="../nupic.util/SparseObjectMatrix.js"></script>
+    <script src="../nupic.encoders/RangeList.js"></script>
+    <script src="../nupic.encoders/DecodeResult.js"></script>
+    <script src="../nupic.encoders/EncoderResult.js"></script>
+    <script src="../nupic.encoders/EncoderTuple.js"></script>
+    <script src="../nupic.encoders/Encoder.js"></script>
+    <script src="../nupic.encoders/ScalarEncoder.js"></script>
+    <script src="../nupic.model/Column.js"></script>
+    <script src="../nupic.model/Cell.js"></script>
+    <script src="../nupic.model/Column.js"></script>
+    <script src="../nupic.model/Segment.js"></script>
+    <script src="../nupic.model/ProximalDendrite.js"></script>
+    <script src="../nupic.model/DistalDendrite.js"></script>
+    <script src="../nupic.model/Pool.js"></script>
+    <script src="../nupic.model/Synapse.js"></script>
+    <script src="../nupic.research/ComputeCycle.js"></script>
+    <script src="../nupic.research/SpatialPooler.js"></script>
+    <script src="../nupic.research/TemporalMemory.js"></script>
+    <script src="./qt_interactive_gui.js"></script>
+    <script src="./QuickTest_interactive.js"></script>
+</head>
+
+<body style="font-family:monospace; background-color:#ccc;">
+    <div id="result" style="margin-bottom:50px;"></div>
+    <div id="error" style="color:#ff0000; font-weight:bold;"></div>
+    <div style="position:fixed; bottom:0px; padding:5px; background:rgba(200,54,54,1); color:#fff; font-weight:bold;">
+        Clear display after
+        <input id="maxBlockCnt" type="text" value=50 size=3 style="text-align:right;" /> iterations.
+        <input id="init" type="button" value="Initialize" />
+        <input id="step" type="button" value="Step" />
+        <input id="run" type="button" value="Run" />
+        <input id="pause" type="button" value="Pause" />
+        <input id="stop" type="button" value="Stop" />
+    </div>
+</body>
+
+</html>
