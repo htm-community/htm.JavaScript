@@ -10,11 +10,10 @@ var Gui = function() {
     this.queue = new Queue(); // Queue that contains the commands to be passed to the QuickTest object
     this.timer = null; // Interval timer checks periodically for actions in the command queue
     this.recordNum = -1; // Input data to be processed by the QuickTest object
-	this.sequenceNum = -1; // Input data to be processed by the QuickTest object
-	this.isResetting = false; // Controls temporal memory reset
+    this.sequenceNum = -1; // Input data to be processed by the QuickTest object
+    this.isResetting = false; // Controls temporal memory reset
     this.lineCnt = 0; // Controls display
     this.maxLineCnt = 0; // Controls display
-    this.tmp = ""; // Controls display
 };
 
 Gui.prototype = {
@@ -40,14 +39,12 @@ Gui.prototype = {
      * Prepares results (@str) for output in the browser
      */
     log: function(str) {
+        if (this.lineCnt++ > this.maxLineCnt && str.indexOf("----------") > -1) {
+            document.getElementById("result").innerHTML = "";
+            this.lineCnt = 0;
+        }
         document.getElementById("result").innerHTML += "<p>" + str + "</p>";
-		this.lineCnt++;
-		
-		if (this.lineCnt > this.maxLineCnt) {
-			document.getElementById("result").innerHTML = "";
-			this.lineCnt = 0;
-		}
-		
+        
         var body = document.getElementsByTagName("body")[0];
         body.scrollTop = body.scrollHeight;
     },
@@ -61,13 +58,13 @@ Gui.prototype = {
          * (Note for future reference: use queues with timestamped entries)	
          */
         this.recordNum = (this.recordNum == 6 ? 0 : this.recordNum + 1);
-		this.sequenceNum++;
+        this.sequenceNum++;
 
         this.queue.enqueue({
             action: "process",
             recordNum: this.recordNum,
-			sequenceNum: this.sequenceNum,
-			isResetting: this.isResetting
+            sequenceNum: this.sequenceNum,
+            isResetting: this.isResetting
         });
     },
 
@@ -76,9 +73,8 @@ Gui.prototype = {
      */
     initControls: function() {
         document.getElementById("maxLineCnt").disabled = false;
-        document.getElementById("maxLineCnt").value = 200;
-		document.getElementById("reset").disabled = false;
-		document.getElementById("reset").checked = false;
+        document.getElementById("reset").disabled = false;
+        document.getElementById("reset").checked = false;
         document.getElementById("init").disabled = false;
         document.getElementById("step").disabled = true;
         document.getElementById("run").disabled = true;
@@ -97,8 +93,8 @@ window.onload = function() {
     gui.initControls();
 
     document.getElementById("init").onclick = function() {
-		gui.isResetting = document.getElementById("reset").checked;
-		document.getElementById("reset").disabled = true;
+        gui.isResetting = document.getElementById("reset").checked;
+        document.getElementById("reset").disabled = true;
 
         gui.maxLineCnt = parseInt(document.getElementById("maxLineCnt").value);
         document.getElementById("maxLineCnt").disabled = true;
@@ -161,9 +157,9 @@ window.onload = function() {
 
         gui.recordNum = -1;
         gui.sequenceNum = -1;
-        gui.isResetting = false;	
+        gui.isResetting = false;
         gui.maxLineCnt = 0;
-        gui.tmp = "";
+        gui.lineCnt = 0;
 
         gui.initControls();
     }
