@@ -9,10 +9,11 @@ var Gui = function() {
     this.isRunning = false; // Used for pausing/continuing simulation
     this.queue = new Queue(); // Queue that contains the commands to be passed to the QuickTest object
     this.timer = null; // Interval timer checks periodically for actions in the command queue
-    this.input = 0; // Input data to be processed by the QuickTest object
-    this.cnt = 0; // Controls display
-    this.blockCnt = 1; // Controls display
-    this.maxBlockCnt = 0; // Controls display
+    this.recordNum = -1; // Input data to be processed by the QuickTest object
+	this.sequenceNum = -1; // Input data to be processed by the QuickTest object
+	this.isResetting = false; // Controls temporal memory reset
+    this.lineCnt = 0; // Controls display
+    this.maxLineCnt = 0; // Controls display
     this.tmp = ""; // Controls display
 };
 
@@ -27,7 +28,7 @@ Gui.prototype = {
                 this.example = new QuickTest(this);
                 break;
             case "process":
-                this.example.processInput(cmd.input);
+                this.example.processInput(cmd.recordNum, cmd.sequenceNum, cmd.isResetting);
                 break;
             default:
                 throw new Error("Action " + cmd.action + " not found in command queue.");
@@ -39,19 +40,14 @@ Gui.prototype = {
      * Prepares results (@str) for output in the browser
      */
     log: function(str) {
-        var el = document.getElementById("result");
-        if (this.cnt % 10 === 9) {
-            el.innerHTML = this.tmp;
-            if (this.blockCnt >= this.maxBlockCnt) {
-                this.tmp = "";
-                this.blockCnt = 0;
-            }
-            this.blockCnt++;
-            this.cnt = 0;
-        } else {
-            this.tmp += "<p>" + str + "</p>";
-            this.cnt++;
-        }
+        document.getElementById("result").innerHTML += "<p>" + str + "</p>";
+		this.lineCnt++;
+		
+		if (this.lineCnt > this.maxLineCnt) {
+			document.getElementById("result").innerHTML = "";
+			this.lineCnt = 0;
+		}
+		
         var body = document.getElementsByTagName("body")[0];
         body.scrollTop = body.scrollHeight;
     },
@@ -59,16 +55,19 @@ Gui.prototype = {
     /*
      * Prepares next input and places it into the command queue
      */
-    prepareNextInput: function() {
+    getNextInput: function() {
         /*
          * Later, this will be the place to collect and combine the data from other entities and the environment
-         * (Note for future use: queues with timestamped entries)	
+         * (Note for future reference: use queues with timestamped entries)	
          */
-        this.input = (this.input == 7 ? 1 : this.input + 1);
+        this.recordNum = (this.recordNum == 6 ? 0 : this.recordNum + 1);
+		this.sequenceNum++;
 
         this.queue.enqueue({
             action: "process",
-            input: this.input
+            recordNum: this.recordNum,
+			sequenceNum: this.sequenceNum,
+			isResetting: this.isResetting
         });
     },
 
@@ -76,7 +75,10 @@ Gui.prototype = {
      * Initializes GUI controls
      */
     initControls: function() {
-        document.getElementById("maxBlockCnt").disabled = false;
+        document.getElementById("maxLineCnt").disabled = false;
+        document.getElementById("maxLineCnt").value = 200;
+		document.getElementById("reset").disabled = false;
+		document.getElementById("reset").checked = false;
         document.getElementById("init").disabled = false;
         document.getElementById("step").disabled = true;
         document.getElementById("run").disabled = true;
@@ -95,9 +97,11 @@ window.onload = function() {
     gui.initControls();
 
     document.getElementById("init").onclick = function() {
+		gui.isResetting = document.getElementById("reset").checked;
+		document.getElementById("reset").disabled = true;
 
-        gui.maxBlockCnt = parseInt(document.getElementById("maxBlockCnt").value);
-        document.getElementById("maxBlockCnt").disabled = true;
+        gui.maxLineCnt = parseInt(document.getElementById("maxLineCnt").value);
+        document.getElementById("maxLineCnt").disabled = true;
 
         document.getElementById("result").innerHTML = "";
 
@@ -122,12 +126,12 @@ window.onload = function() {
 
     document.getElementById("step").onclick = function() {
         gui.isRunning = false;
-        gui.prepareNextInput();
+        gui.getNextInput();
     }
 
     document.getElementById("run").onclick = function() {
         gui.isRunning = true;
-        gui.prepareNextInput();
+        gui.getNextInput();
 
         document.getElementById("step").disabled = true;
         document.getElementById("run").disabled = true;
@@ -155,9 +159,10 @@ window.onload = function() {
             gui.queue.dequeue();
         }
 
-        gui.input = 0;
-        gui.cnt = 0;
-        gui.blockCnt = 1;
+        gui.recordNum = -1;
+        gui.sequenceNum = -1;
+        gui.isResetting = false;	
+        gui.maxLineCnt = 0;
         gui.tmp = "";
 
         gui.initControls();

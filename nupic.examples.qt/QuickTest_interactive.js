@@ -16,7 +16,6 @@
  */
 var QuickTest = function(gui) {
     this.gui = gui;
-    this.sequenceNum = 0;
     this.params = this.getParameters();
     console.log(this.params);
 
@@ -41,15 +40,15 @@ var QuickTest = function(gui) {
 
 QuickTest.prototype = {
 
-    processInput: function(i) {
-        //if (i === 1) {
-        //    this.tm.reset(this.layer.getMemory());
-        //}
-        this.runThroughLayer(this.layer, i, i, this.sequenceNum++);
+    processInput: function(i, x, isResetting) {
+        if (i === 0 && isResetting) {
+            this.tm.reset(this.layer.getMemory());
+        }
+        this.runThroughLayer(this.layer, i + 1, (isResetting ? i : x), x);
 
         // Coupling to GUI
         if (this.gui.isRunning) {
-            this.gui.prepareNextInput();
+            this.gui.getNextInput();
         }
     },
 
@@ -137,7 +136,7 @@ QuickTest.prototype.LayerImpl = function(gui, p, e, s, t, c) { // LayerImpl(Para
 QuickTest.prototype.LayerImpl.prototype = {
     input: function(value, recordNum, sequenceNum) { // void(Double, int, int)
         var recordOut = "";
-        switch (recordNum) {
+        switch (parseInt(value)) {
             case 1:
                 recordOut = "Monday (1)";
                 break;
@@ -161,12 +160,11 @@ QuickTest.prototype.LayerImpl.prototype = {
                 break;
         }
 
-        //if (recordNum === 1) {
-        this.theNum++;
-        this.gui.log("--------------------------------------------------------");
-        this.gui.log("Iteration: " + this.theNum);
-        //}
-        this.gui.log("===== " + recordOut + "  - Sequence Num: " + sequenceNum + " =====");
+        if (parseInt(value) === 1) {
+            this.theNum++;
+        }
+		this.gui.log("------------------------------------------------------------------");
+        this.gui.log("===== " + recordOut + "  - Sequence Num: " + sequenceNum + " ===== Iteration: " + this.theNum + " =====");
 
         var output = newArray([this.columnCount], 0);
 
@@ -179,6 +177,11 @@ QuickTest.prototype.LayerImpl.prototype = {
         //Input through spatial pooler
         this.spatialPooler.compute(this.memory, encoding, output, true, true);
         this.gui.log("SpatialPooler Output = " + output.toString());
+		
+        // Let the SpatialPooler train independently (warm up) first
+        //if (sequenceNum < 1400) {
+        //    return;
+        //}
 
         //Input through temporal memory
         var input = this.actual = ArrayUtils.where(output, ArrayUtils.WHERE_1);
@@ -194,7 +197,7 @@ QuickTest.prototype.LayerImpl.prototype = {
         this.classification.set("actValue", value);
         var result = this.classifier.compute(recordNum, this.classification, this.predictedColumns, true, true);
 
-        this.gui.log("  |  CLAClassifier 1 step prob = " + result.getStats(1).toString() + "\n");
+        this.gui.log("CLAClassifier 1 step prob =<br />" + result.getStats(1).toString());
 
         this.gui.log("");
     },
