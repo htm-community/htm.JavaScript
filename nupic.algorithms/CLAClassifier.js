@@ -82,7 +82,7 @@ var CLAClassifier = function() {
         that.actValueAlpha = actValueAlpha;
         that.verbosity = verbosity;
         that.actualValues.push(null);
-        that.patternNZHistory = new Deque(steps.length + 1);
+        that.patternNZHistory = new Deque(ArrayUtils.max(steps) + 1);
     }
 
     if (arguments.length === 0) {
@@ -183,7 +183,7 @@ CLAClassifier.prototype = {
                 for (var j = 0; j < patternNZ.length; j++) {
                     var bit = patternNZ[j];
                     var t = new Tuple(bit, nSteps); // just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
-                    var key = t.hashCode();
+                    var key = t._hashCode();
                     var history = this.activeBitHistory.get(key);
                     if (isNullOrUndefined(history)) {
                         continue;
@@ -203,8 +203,7 @@ CLAClassifier.prototype = {
                     // buckets equally likely. There is no actual prediction for this
                     // timestep so any of the possible predictions are just as good.
                     if (sumVotes.length > 0) {
-                        sumVotes.fill(1);
-                        sumVotes = ArrayUtils.divide(sumVotes, sumVotes.length);
+						sumVotes.fill(1.0 / sumVotes.length);
                     }
                 }
 
@@ -262,12 +261,7 @@ CLAClassifier.prototype = {
                     }
                     iteration = Math.floor(t['value'].get(0));
                     learnPatternNZ = t['value'].get(1);
-                    if (iteration === this.learnIteration - nSteps) {  
-                        // otherwise bucketIdx = 0 never gets stored =>
-                        // correct prediction Sun -> Mon is classified incorrectly =>
-                        // need to reset memory on Sunday (QuickTest_interactive.js:46), 
-                        // this fix works only for one step prediction, though (|| this.learnIteration - nSteps < -1 ?)
-                        //|| this.learnIteration - nSteps === -1) {	
+                    if (iteration === this.learnIteration - nSteps) {
                         found = true;
                         break;
                     }
@@ -283,7 +277,7 @@ CLAClassifier.prototype = {
                     var bit = learnPatternNZ[j];
                     // Get the history structure for this bit and step
                     var t = new Tuple(bit, nSteps); // just "key = new Tuple(bit, nSteps)" doesn't work, neither does "key = [bit, nSteps]"
-                    var key = t.hashCode();
+                    var key = t._hashCode();
                     var history = this.activeBitHistory.get(key);
                     if (isNullOrUndefined(history)) {
                         this.activeBitHistory.set(key, history = new BitHistory(this, bit, nSteps));

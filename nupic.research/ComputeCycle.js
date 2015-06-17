@@ -12,7 +12,7 @@ var ComputeCycle = function() {
     this.activeCells = new Set();
     this.winnerCells = new Set();
     this.predictiveCells = new Set();
-    this.predictedColumns = new Set();
+    this.successfullyPredictedColumns = new Set();
     this.activeSegments = new Set();
     this.learningSegments = new Set();
     this.activeSynapsesForSegment = new Map();
@@ -35,7 +35,7 @@ var ComputeCycle = function() {
         that.activeCells = new Set(c.getActiveCells());
         that.winnerCells = new Set(c.getWinnerCells());
         that.predictiveCells = new Set(c.getPredictiveCells());
-        that.predictedColumns = new Set(c.getPredictedColumns());
+        that.successfullyPredictedColumns = new Set(c.getSuccessfullyPredictedColumns());
         that.activeSegments = new Set(c.getActiveSegments());
         that.learningSegments = new Set(c.getLearningSegments());
         that.activeSynapsesForSegment = copyOf(c.getActiveSynapsesForSegment(), "map"); // new LinkedHashMap<DistalDendrite, Set<Synapse>>(c.getActiveSynapsesForSegment());
@@ -76,12 +76,12 @@ ComputeCycle.prototype = {
     },
 
     /**
-     * Returns the current {@link Set} of predicted columns
+     * Returns the {@link Set} of columns successfully predicted from t - 1.
      * 
      * @return  the current {@link Set} of predicted columns
      */
-    _predictedColumns: function() { // Set<Column>(void)
-        return this.predictedColumns;
+    _successfullyPredictedColumns: function() { // Set<Column>(void)
+        return this.successfullyPredictedColumns;
     },
 
     /**

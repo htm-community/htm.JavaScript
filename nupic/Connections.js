@@ -89,7 +89,7 @@ var Connections = function() {
     this.activeCells = new Set(); // Set<Cell> activeCells = new LinkedHashSet<Cell>();
     this.winnerCells = new Set(); // Set<Cell> winnerCells = new LinkedHashSet<Cell>();
     this.predictiveCells = new Set(); // Set<Cell> predictiveCells = new LinkedHashSet<Cell>();
-    this.predictedColumns = new Set(); // Set<Column> predictedColumns = new LinkedHashSet<Column>();
+    this.successfullyPredictedColumns = new Set(); // Set<Column> successfullyPredictedColumns = new LinkedHashSet<Column>();
     this.activeSegments = new Set(); // Set<DistalDendrite> activeSegments = new LinkedHashSet<DistalDendrite>();
     this.learningSegments = new Set(); // Set<DistalDendrite> learningSegments = new LinkedHashSet<DistalDendrite>();
     this.activeSynapsesForSegment = new Map(); // Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
@@ -175,7 +175,7 @@ Connections.prototype = {
         this.activeCells.clear();
         this.winnerCells.clear();
         this.predictiveCells.clear();
-        this.predictedColumns.clear();
+        this.successfullyPredictedColumns.clear();
         this.activeSegments.clear();
         this.learningSegments.clear();
         this.activeSynapsesForSegment.clear();
@@ -1072,20 +1072,20 @@ Connections.prototype = {
     },
 
     /**
-     * Returns the current {@link Set} of predicted columns
+     * Returns the {@link Set} of columns successfully predicted from t - 1.
      * 
      * @return  the current {@link Set} of predicted columns
      */
-    getPredictedColumns: function() { // Set<Column>(void)
-        return this.predictedColumns;
+    getSuccessfullyPredictedColumns: function() { // Set<Column>(void)
+        return this.successfullyPredictedColumns;
     },
 
     /**
-     * Sets the {@link Set} of predictedColumns
+     * Sets the {@link Set} of columns successfully predicted from t - 1.
      * @param columns
      */
-    setPredictedColumns: function(columns) { // void(Set<Column>)
-        this.predictedColumns = columns;
+    setSuccessfullyPredictedColumns: function(columns) { // void(Set<Column>)
+        this.successfullyPredictedColumns = columns;
     },
 
     /**

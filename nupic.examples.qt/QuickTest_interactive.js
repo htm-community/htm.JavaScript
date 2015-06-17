@@ -47,8 +47,8 @@ QuickTest.prototype = {
         this.runThroughLayer(this.layer, i + 1, (isResetting ? i : x), x);
 
         // Coupling to GUI
-        if (this.gui.isRunning) {
-            this.gui.getNextInput();
+        if (this.gui.runOn) {
+            this.gui.nextInput();
         }
     },
 
@@ -164,7 +164,7 @@ QuickTest.prototype.LayerImpl.prototype = {
             this.theNum++;
         }
 		this.gui.log("------------------------------------------------------------------");
-        this.gui.log("===== " + recordOut + "  - Sequence Num: " + sequenceNum + " ===== Iteration: " + this.theNum + " =====");
+        this.gui.log("===== " + recordOut + "  - Sequence Num: " + sequenceNum + "  - Iteration: " + this.theNum + " =====");
 
         var output = newArray([this.columnCount], 0);
 

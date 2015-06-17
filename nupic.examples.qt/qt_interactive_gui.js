@@ -6,7 +6,7 @@
  */
 var Gui = function() {
     this.example = null; // Will contain the QuickTest object
-    this.isRunning = false; // Used for pausing/continuing simulation
+    this.runOn = false; // Used for pausing/continuing simulation
     this.queue = new Queue(); // Queue that contains the commands to be passed to the QuickTest object
     this.timer = null; // Interval timer checks periodically for actions in the command queue
     this.recordNum = -1; // Input data to be processed by the QuickTest object
@@ -52,7 +52,7 @@ Gui.prototype = {
     /*
      * Prepares next input and places it into the command queue
      */
-    getNextInput: function() {
+    nextInput: function() {
         /*
          * Later, this will be the place to collect and combine the data from other entities and the environment
          * (Note for future reference: use queues with timestamped entries)	
@@ -121,13 +121,13 @@ window.onload = function() {
     }
 
     document.getElementById("step").onclick = function() {
-        gui.isRunning = false;
-        gui.getNextInput();
+        gui.runOn= false;
+        gui.nextInput();
     }
 
     document.getElementById("run").onclick = function() {
-        gui.isRunning = true;
-        gui.getNextInput();
+        gui.runOn = true;
+        gui.nextInput();
 
         document.getElementById("step").disabled = true;
         document.getElementById("run").disabled = true;
@@ -136,7 +136,7 @@ window.onload = function() {
     }
 
     document.getElementById("pause").onclick = function() {
-        gui.isRunning = false;
+        gui.runOn = false;
 
         document.getElementById("step").disabled = false;
         document.getElementById("run").disabled = false;
@@ -148,7 +148,7 @@ window.onload = function() {
      * Terminate simualtion and clean up
      */
     document.getElementById("stop").onclick = function() {
-        gui.isRunning = false;
+        gui.runOn = false;
         clearInterval(gui.timer);
 
         while (gui.queue.peek()) {

@@ -75,7 +75,7 @@ TemporalMemory.prototype = {
         connections.setActiveCells(result._activeCells());
         connections.setWinnerCells(result._winnerCells());
         connections.setPredictiveCells(result._predictiveCells());
-        connections.setPredictedColumns(result._predictedColumns());
+        connections.setSuccessfullyPredictedColumns(result._successfullyPredictedColumns());
         connections.setActiveSegments(result._activeSegments());
         connections.setLearningSegments(result._learningSegments());
         connections.setActiveSynapsesForSegment(result._activeSynapsesForSegment());
@@ -103,7 +103,7 @@ TemporalMemory.prototype = {
 
         this.activateCorrectlyPredictiveCells(cycle, prevPredictiveCells, activeColumns);
 
-        this.burstColumns(cycle, c, activeColumns, cycle.predictedColumns, prevActiveSynapsesForSegment);
+        this.burstColumns(cycle, c, activeColumns, cycle.successfullyPredictedColumns, prevActiveSynapsesForSegment);
 
         if (learn) {
             this.learnOnSegments(c, prevActiveSegments, cycle.learningSegments, prevActiveSynapsesForSegment, cycle.winnerCells, prevWinnerCells);
@@ -137,7 +137,7 @@ TemporalMemory.prototype = {
             if (activeColumns.has(column)) {
                 c.activeCells.add(cell);
                 c.winnerCells.add(cell);
-                c.predictedColumns.add(column);
+                c.successfullyPredictedColumns.add(column);
             }
         }
     },
