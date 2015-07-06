@@ -6,8 +6,8 @@
  */
 var Gui = function() {
     this.example = null; // Will contain the QuickTest object
-    this.runOn = false; // Used for pausing/continuing simulation
-    this.queue = new Queue(); // Queue that contains the commands to be passed to the QuickTest object
+    this.carryOn = false; // Used for pausing/continuing simulation
+    this.cmdQueue = new Queue(); // Queue that contains the commands to be passed to the QuickTest object
     this.timer = null; // Interval timer checks periodically for actions in the command queue
     this.recordNum = -1; // Input data to be processed by the QuickTest object
     this.sequenceNum = -1; // Input data to be processed by the QuickTest object
@@ -60,7 +60,7 @@ Gui.prototype = {
         this.recordNum = (this.recordNum == 6 ? 0 : this.recordNum + 1);
         this.sequenceNum++;
 
-        this.queue.enqueue({
+        this.cmdQueue.enqueue({
             action: "process",
             recordNum: this.recordNum,
             sequenceNum: this.sequenceNum,
@@ -101,7 +101,7 @@ window.onload = function() {
 
         document.getElementById("result").innerHTML = "";
 
-        gui.queue.enqueue({
+        gui.cmdQueue.enqueue({
             action: "initialize"
         });
 
@@ -109,8 +109,8 @@ window.onload = function() {
          * Periodically check the command queue for commands
          */
         gui.timer = setInterval(function() {
-            if (gui.queue.peek() !== undefined) {
-                gui.executeCmd(gui.queue.dequeue());
+            if (gui.cmdQueue.peek() !== undefined) {
+                gui.executeCmd(gui.cmdQueue.dequeue());
             }
         }, 4);
 
@@ -121,12 +121,12 @@ window.onload = function() {
     }
 
     document.getElementById("step").onclick = function() {
-        gui.runOn= false;
+        gui.carryOn= false;
         gui.nextInput();
     }
 
     document.getElementById("run").onclick = function() {
-        gui.runOn = true;
+        gui.carryOn = true;
         gui.nextInput();
 
         document.getElementById("step").disabled = true;
@@ -136,7 +136,7 @@ window.onload = function() {
     }
 
     document.getElementById("pause").onclick = function() {
-        gui.runOn = false;
+        gui.carryOn = false;
 
         document.getElementById("step").disabled = false;
         document.getElementById("run").disabled = false;
@@ -148,11 +148,11 @@ window.onload = function() {
      * Terminate simualtion and clean up
      */
     document.getElementById("stop").onclick = function() {
-        gui.runOn = false;
+        gui.carryOn = false;
         clearInterval(gui.timer);
 
-        while (gui.queue.peek()) {
-            gui.queue.dequeue();
+        while (gui.cmdQueue.peek()) {
+            gui.cmdQueue.dequeue();
         }
 
         gui.recordNum = -1;

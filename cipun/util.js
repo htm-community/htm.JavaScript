@@ -134,6 +134,10 @@ var Logger = function() {
     this.info = function(arg) {
         console.log(arg);
     }
+	
+    this.debug = function(arg) {
+        console.log(arg);
+    }	
 };
 
 /*

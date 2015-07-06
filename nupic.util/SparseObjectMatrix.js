@@ -79,7 +79,7 @@ SparseObjectMatrix.prototype.getObject = function(index) { // T(int)
  * @param coordinates   the coordinates from which to retrieve the indexed object
  * @return  the indexed object
  */
-SparseObjectMatrix.prototype.get = function(coordinates) { // T(int...)
+SparseObjectMatrix.prototype.get = function(...coordinates) { // T(int...)
     return this.sparseMap.get(this.computeIndex(coordinates));
 };
 

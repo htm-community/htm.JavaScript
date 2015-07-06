@@ -47,7 +47,7 @@ QuickTest.prototype = {
         this.runThroughLayer(this.layer, i + 1, (isResetting ? i : x), x);
 
         // Coupling to GUI
-        if (this.gui.runOn) {
+        if (this.gui.carryOn) {
             this.gui.nextInput();
         }
     },

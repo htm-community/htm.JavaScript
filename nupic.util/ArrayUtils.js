@@ -189,7 +189,7 @@ var ArrayUtils = {
         return s.toString();
     },
 
-    zip: function() {
+    zip: function(...args) {
 
         /**
          * Return a list of tuples, where each tuple contains the i-th element
@@ -219,20 +219,20 @@ var ArrayUtils = {
          * @param arg2 the first list to be the one'th entry in the returned tuple
          * @return a list of tuples
          */
-        var zip1 = function() { // List<Tuple>(Object[]...)
+        var zip1 = function(...args) { // List<Tuple>(Object[]...)
             var tuples = [];
-            var len = arguments.length;
+            var len = args.length;
             for (var i = 0; i < len; i++) {
-                tuples.push(new Tuple(arguments[i]));
+                tuples.push(new Tuple(args[i]));
             }
 
             return tuples;
         };
 
-        if (arguments.length === 2) {
-            return zip2(arguments[0], arguments[1]);
+        if (args.length === 2) {
+            return zip2(args[0], args[1]);
         } else {
-            return zip1(arguments);
+            return zip1(...args);
         }
     },
 
@@ -1377,7 +1377,7 @@ var ArrayUtils = {
      * @param value
      * @param indexes
      */
-    setValue: function(array, value, indexes) { // void(Object, int, int...)
+    setValue: function(array, value, ...indexes) { // void(Object, int, int...)
         if (indexes.length === 1) {
             array[indexes[0]] = value;
         } else {
@@ -1465,20 +1465,8 @@ var ArrayUtils = {
      * @return The concatenated array
      *
      * http://stackoverflow.com/a/784842
-     */
-    /*
-	// no explicit parameter rest
-	concatAll: function(first) {	// int[](int[], int[]...) or T[](T[], T[]...)
-		var result = copyOf(first, "array");
-		var i = 1;
-		while (!(arguments[i] === undefined)) {
-        	result = result.concat(arguments[i++]);
-        }       
-        return result;
-    }*/
-
-    // rest must be an array
-    concatAll: function(first, rest) { // int[](int[], int[]...) or T[](T[], T[]...)
+     */  
+    concatAll: function(first, ...rest) { // int[](int[], int[]...) or T[](T[], T[]...)
         var result = copyOf(first, "array");
         for (var i = 0; i < rest.length; i++) {
             result = result.concat(rest[i]);

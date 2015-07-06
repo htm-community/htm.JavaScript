@@ -28,8 +28,8 @@ SparseBinaryMatrix.prototype.constructor = SparseBinaryMatrix;
  * @param val
  * @param coordinates
  */
-SparseBinaryMatrix.prototype.back = function(val, coordinates) { // void(int, int...)
-    ArrayUtils.setValue(this.backingArray, val, coordinates);
+SparseBinaryMatrix.prototype.back = function(val, ...coordinates) { // void(int, int...)
+    ArrayUtils.setValue(this.backingArray, val, ...coordinates);
     //update true counts
     this.trueCounts[coordinates[0]] = ArrayUtils.aggregateArray(this.backingArray[coordinates[0]]);
 };
@@ -44,7 +44,7 @@ SparseBinaryMatrix.prototype.back = function(val, coordinates) { // void(int, in
  * @throws	IllegalArgumentException if the specified coordinates address
  * 			an actual value instead of the array holding it.
  */
-SparseBinaryMatrix.prototype.getSlice = function(coordinates) { // Object(int...)
+SparseBinaryMatrix.prototype.getSlice = function(...coordinates) { // Object(int...)
     var slice = this.backingArray;
 
     if (Array.isArray(coordinates)) {
@@ -82,7 +82,7 @@ SparseBinaryMatrix.prototype.rightVecSumAtNZ = function(inputVector, results) { 
     }
 };
 
-SparseBinaryMatrix.prototype.set = function() {
+SparseBinaryMatrix.prototype.set = function(...args) {
 
     var that = this;
 
@@ -103,9 +103,9 @@ SparseBinaryMatrix.prototype.set = function() {
      * @param coordinates   the row major coordinates [outer --> ,...,..., inner]
      * @param object        the object to be indexed.
      */
-    var set2 = function(value, coordinates) { // SparseBinaryMatrix(int, int...)
-        that.sparseMap.set(that.computeIndex(coordinates), value);
-        that.back(value, coordinates);
+    var set2 = function(value, ...coordinates) { // SparseBinaryMatrix(int, int...)
+        that.sparseMap.set(that.computeIndex(coordinates), value);	
+        that.back(value, ...coordinates);	// pass rest variable when the receiving function uses rest variable, too
         return that;
     };
 
@@ -143,16 +143,16 @@ SparseBinaryMatrix.prototype.set = function() {
         return that;
     };
 
-    if (arguments.length === 2 && !Array.isArray(arguments[0]) && !Array.isArray(arguments[1])) {
-        return set1(arguments[0], arguments[1]);
-    } else if (arguments.length === 2 && !Array.isArray(arguments[0]) && Array.isArray(arguments[1])) {
-        return set2(arguments[0], arguments[1]);
-    } else if (arguments.length === 2 && Array.isArray(arguments[0]) && Array.isArray(arguments[1])) {
-        return set3(arguments[0], arguments[1]);
-    } else if (arguments.length === 3 && Array.isArray(arguments[0] && Array.isArray(arguments[1]))) {
-        return set4(arguments[0], arguments[1], arguments[2]);
-    } else if (arguments.length === 3 && !Array.isArray(arguments[0] && !Array.isArray(arguments[1]) && !Array.isArray(arguments[2]))) {
-        return set2(arguments[0], [arguments[1], arguments[2]]);
+    if (args.length === 2 && !Array.isArray(args[0]) && !Array.isArray(args[1])) {	// do not use arguments bec. of rest variable ...args
+        return set1(args[0], args[1]);
+    } else if (args.length === 2 && !Array.isArray(args[0]) && Array.isArray(args[1])) {
+        return set2(args[0], args[1]);
+    } else if (args.length === 2 && Array.isArray(args[0]) && Array.isArray(args[1])) {
+        return set3(args[0], args[1]);
+    } else if (args.length === 3 && Array.isArray(args[0] && Array.isArray(args[1]))) {
+        return set4(args[0], args[1], args[2]);
+    } else if (args.length === 3 && !Array.isArray(args[0] && !Array.isArray(args[1]) && !Array.isArray(args[2]))) {
+        return set2(args[0], args[1], args[2]);
     }
 };
 
@@ -222,7 +222,7 @@ SparseBinaryMatrix.prototype.getIntValue = function() {
      * @param coordinates   the coordinates from which to retrieve the indexed object
      * @return  the indexed object
      */
-    var getIntValueByVector = function(coordinates) { // int(int...)
+    var getIntValueByVector = function(...coordinates) { // int(int...)
         return that.sparseMap.get(that.computeIndex(coordinates));
     };
 

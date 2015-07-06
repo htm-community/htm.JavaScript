@@ -5,6 +5,74 @@
 
 <script>
 
+	function set() {
+
+		var set2 = function(value, ...coordinates) { // SparseBinaryMatrix(int, int...)
+			console.log(value);
+			console.log(coordinates);
+		};
+
+		if (arguments.length === 3 && !Array.isArray(arguments[0] && !Array.isArray(arguments[1]) && !Array.isArray(arguments[2]))) {
+			return set2(arguments[0], arguments[1], arguments[2]);
+		}
+	};
+
+	set(1, 2, 3);
+
+
+
+    var fun1 = function(value, ...coordinates) { // SparseBinaryMatrix(int, int...)
+		console.log(coordinates);
+		console.log(value);
+	};
+
+    var fun2 = function() { // SparseBinaryMatrix(int, int...)
+	    var args = Array.slice(arguments, 0); //Array.from(arguments); //Array.prototype.slice.call(arguments);
+		console.log(args.slice(1));
+		console.log(args[0]);
+	};
+
+    var fun3 = function(value, coordinates) { // SparseBinaryMatrix(int, int...)
+	    var args = Array.prototype.slice.call(arguments);
+		console.log(args.slice(1));
+		console.log(args[0]);
+		console.log(coordinates);
+		console.log(value);
+	};
+	
+	fun1(10, 11, 12, 13);
+	fun2(10, 11, 12, 13);
+	fun3(10, 11, 12, 13);
+
+function Tree(name) {
+  this.name = name;
+}
+
+var theTree = new Tree('Redwood');
+console.log('theTree.constructor is ' + theTree.constructor);
+
+
+var Foo = function() {};
+Foo.prototype.bar = function() {};
+var foo = new Foo();
+
+typeof Foo;             // == "function"
+typeof foo;             // == "object"
+
+foo instanceof Foo;     // == true
+foo.constructor;        // == Foo
+
+Foo.prototype.isPrototypeOf(foo);   // == true
+		
+		var x = new Deque(10);
+		var y = new Tuple();
+		console.log(x.constructor);
+		console.log(x.prototype);
+		console.log(typeof x);
+		console.log(x.constructor === y.constructor);
+		
+		
+				
 var m = new Map();
 
 var k1 = new Tuple(1, 2);

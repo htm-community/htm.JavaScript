@@ -61,6 +61,55 @@ SparseMatrix.prototype = {
     },
 
     /**
+     * Sets the object to occupy the specified index.
+     * 
+     * @param index     the index the object will occupy
+     * @param object    the object to be indexed.
+     * 
+     * @return this {@code SparseMatrix} implementation
+     */
+    set: function(...args) { return null; },
+             
+    /**
+     * Returns the T at the specified index.
+     * 
+     * @param index     the index of the T to return
+     * @return  the T at the specified index.
+     */
+    getObject: function(index) { return null; },
+    
+    /**
+     * Returns the T at the specified index.
+     * 
+     * @param index     the index of the T to return
+     * @return  the T at the specified index.
+     */
+    getIntValue: function(...args) { return -1; },
+    
+    /**
+     * Returns the T at the specified index.
+     * 
+     * @param index     the index of the T to return
+     * @return  the T at the specified index.
+     */
+    getDoubleValue: function(...args) { return -1.0; },
+        
+    /**
+     * Returns the T at the index computed from the specified coordinates
+     * @param coordinates   the coordinates from which to retrieve the indexed object
+     * @return  the indexed object
+     */
+    get(...coordinates) { return null; },
+        
+    /**
+     * Returns a sorted array of occupied indexes.
+     * @return  a sorted array of occupied indexes.
+     */
+    getSparseIndices: function() { 
+    	return null;
+    },
+
+    /**
      * Returns an array of all the flat indexes that can be 
      * computed from the current configuration.
      * @return
