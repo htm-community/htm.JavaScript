@@ -19,81 +19,73 @@
  * http://numenta.org/licenses/
  * ---------------------------------------------------------------------
  */
-
-package org.numenta.nupic.algorithms;
-
-import org.joda.time.DateTime;
-
 /**
  * A sample data point or record consisting of a timestamp, value, and score.
  * This class is used as an input value to methods in the {@link AnomalyLikelihood}
  * class.
  */
-public class Sample {
-    public final DateTime date;
-    /** Same thing as average */
-    public final double score;
+function Sample(timeStamp, value, score) {	// Sample(DateTime, double, double)
+    if(isNullOrUndefined(timeStamp)) {
+        throw new Error("Sample must have a valid date");
+    }
+    this.date = timeStamp;
     /** Original value */
-    public final double value;
+    this.value = value;
+    /** Same thing as average */
+    this.score = score;
+};
     
-    public Sample(DateTime timeStamp, double value, double score) {
-        if(timeStamp == null) {
-            throw new IllegalArgumentException("Sample must have a valid date");
-        }
-        this.date = timeStamp;
-        this.value = value;
-        this.score = score;
-    }
+/**
+ * Returns a {@link DateTime} object representing the internal timestamp
+ * @return
+ */
+Sample.prototype.timeStamp = function() {	// DateTime(void)
+    return date;
+};
     
-    /**
-     * Returns a {@link DateTime} object representing the internal timestamp
-     * @return
-     */
-    public DateTime timeStamp() {
-        return date;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return new StringBuilder(timeStamp().toString()).append(", value: ").
-            append(value).append(", metric: ").append(score).toString();
-    }
+/**
+ * {@inheritDoc}
+ */
+Sample.prototype.toString = function() {	// String(void)
+    return timeStamp().toString() + ", value: " +
+        value + ", metric: " + score;
+};
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        long temp;
-        temp = Double.doubleToLongBits(score);
-        result = prime * result + (int)(temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(value);
-        result = prime * result + (int)(temp ^ (temp >>> 32));
-        return result;
-    }
+Sample.prototype.hashCode = function() {	// int(void)
+    var prime = 31;
+    var result = 1;
+    result = prime * result + (isNullOrUndefined(this.date) ? 0 : HashCode.value(this.date));
+    var temp;
+    temp = score;
+    result = prime * result + Math.floor(temp ^ (temp >>> 32));
+    temp = value;
+    result = prime * result + Math.floor(temp ^ (temp >>> 32));
+    return result;
+};
 
-    @Override
-    public boolean equals(Object obj) {
-        if(this == obj)
-            return true;
-        if(obj == null)
-            return false;
-        if(getClass() != obj.getClass())
-            return false;
-        Sample other = (Sample)obj;
-        if(date == null) {
-            if(other.date != null)
-                return false;
-        } else if(!date.equals(other.date))
-            return false;
-        if(Double.doubleToLongBits(score) != Double.doubleToLongBits(other.score))
-            return false;
-        if(Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
-            return false;
+Sample.prototype.equals = function(obj) {	// boolean(Object)
+    if (this === obj) {
         return true;
     }
-
-    
-}
+    if (isNullOrUndefined(obj)) {
+        return false;
+    }
+    if (this.constructor !== obj.constructor) {
+        return false;
+    }
+    var other = obj;
+    if (isNullorUndefined(this.date)) {
+        if (!isNullOrUndefined(other.date)) {
+            return false;
+		}
+    } else if (this.date !== other.date) {
+        return false;
+	}
+    if (this.score) !== other.score) {
+        return false;
+	}
+    if (this.value) !== other.value) {
+        return false;
+	}
+    return true;  
+};

@@ -105,7 +105,7 @@ SparseBinaryMatrix.prototype.set = function(...args) {
      */
     var set2 = function(value, ...coordinates) { // SparseBinaryMatrix(int, int...)
         that.sparseMap.set(that.computeIndex(coordinates), value);	
-        that.back(value, ...coordinates);	// pass rest variable when the receiving function uses rest variable, too
+        that.back(value, ...coordinates);	// pass rest parameter when the receiving function uses rest parameter, too
         return that;
     };
 
@@ -143,7 +143,7 @@ SparseBinaryMatrix.prototype.set = function(...args) {
         return that;
     };
 
-    if (args.length === 2 && !Array.isArray(args[0]) && !Array.isArray(args[1])) {	// do not use arguments bec. of rest variable ...args
+    if (args.length === 2 && !Array.isArray(args[0]) && !Array.isArray(args[1])) {	// do not use arguments bec. of rest parameter ...args
         return set1(args[0], args[1]);
     } else if (args.length === 2 && !Array.isArray(args[0]) && Array.isArray(args[1])) {
         return set2(args[0], args[1]);
