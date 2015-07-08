@@ -1,3 +1,28 @@
-Ported:
-Statistic.js
-Sample.js
+Progress towards replicating the htm.java network demo 
+(translated: +, not yet translated: -):
+
++ Statistic.js
++ Sample.js
++ NamedTuple.js
+- NetworkAPIDemo.js
+- NetworkDemoHarness.js
+- Inference.js
+- Network.js
+- Layer.js
+- Region.js
+- Anomaly.js
+- MultiEncoder.js
+- DateEncoder.js
+- SensorFactory.js
+- HTMSensor.js
+- Sensor.js
+- AdaptiveScalarEncoder.js
+- CategoryEncoder.js
+- DeltaEncoder.js
+- GeospatialCoordinateEncoder.js
+- LogEncoder.js
+- RandomDistributedScalarEncoder.js
+- SDRCategoryEncoder.js
+- MovingAvarege.js
+- AnomalyLikelihood.js
+- AnomalyLikelihoodMetric.js

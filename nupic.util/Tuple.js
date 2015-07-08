@@ -33,6 +33,23 @@ Tuple.prototype.get = function(index) { // Object(int) {
 };
 
 /**
+ * Returns the number of items in this {@code Tuple}
+ * 
+ * @return
+ */
+Tuple.prototype.size = function() {	// int(void)
+    return this.container.length;
+};
+	
+/**
+ * Returns an <em>unmodifiable</em> view of the underlying data.
+ * @return
+ */
+Tuple.prototype.all = function() {	// List<Object>(void)
+    return this.container;
+};
+	
+/**
  * {@inheritDoc}
  */
 Tuple.prototype.toString = function() { // String(void) {

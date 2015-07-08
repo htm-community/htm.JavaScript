@@ -1,3 +1,16 @@
+String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length === 0) {
+        return hash;
+	}
+    for (var i=0; i<this.length; i++) {
+        var _char = this.charCodeAt(i);
+        hash = ((hash << 5) - hash) + _char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
+
 var isNullOrUndefined = function(o) {
     if (o === null || o === undefined || typeof o === undefined) {
         return true;
