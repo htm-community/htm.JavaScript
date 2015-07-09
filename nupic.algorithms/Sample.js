@@ -24,8 +24,8 @@
  * This class is used as an input value to methods in the {@link AnomalyLikelihood}
  * class.
  */
-function Sample(timeStamp, value, score) {	// Sample(DateTime, double, double)
-    if(isNullOrUndefined(timeStamp)) {
+function Sample(timeStamp, value, score) { // Sample(DateTime, double, double)
+    if (isNullOrUndefined(timeStamp)) {
         throw new Error("Sample must have a valid date");
     }
     this.date = timeStamp;
@@ -34,36 +34,36 @@ function Sample(timeStamp, value, score) {	// Sample(DateTime, double, double)
     /** Same thing as average */
     this.score = score;
 };
-    
+
 /**
  * Returns a {@link DateTime} object representing the internal timestamp
  * @return
  */
-Sample.prototype.timeStamp = function() {	// DateTime(void)
-    return date;
+Sample.prototype.timeStamp = function() { // DateTime(void)
+    return this.date;
 };
-    
+
 /**
  * {@inheritDoc}
  */
-Sample.prototype.toString = function() {	// String(void)
-    return timeStamp().toString() + ", value: " +
-        value + ", metric: " + score;
+Sample.prototype.toString = function() { // String(void)
+    return this.timeStamp().toString() + ", value: " +
+        this.value + ", metric: " + this.score;
 };
 
-Sample.prototype.hashCode = function() {	// int(void)
+Sample.prototype.hashCode = function() { // int(void)
     var prime = 31;
     var result = 1;
-    result = prime * result + (isNullOrUndefined(this.date) ? 0 : HashCode.value(this.date));
+    result = prime * result + (isNullOrUndefined(this.date) ? 0 : parseInt(HashCode.value(this.date), 16));
     var temp;
-    temp = score;
+    temp = this.score;
     result = prime * result + Math.floor(temp ^ (temp >>> 32));
-    temp = value;
+    temp = this.value;
     result = prime * result + Math.floor(temp ^ (temp >>> 32));
     return result;
 };
 
-Sample.prototype.equals = function(obj) {	// boolean(Object)
+Sample.prototype.equals = function(obj) { // boolean(Object)
     if (this === obj) {
         return true;
     }
@@ -77,15 +77,15 @@ Sample.prototype.equals = function(obj) {	// boolean(Object)
     if (isNullorUndefined(this.date)) {
         if (!isNullOrUndefined(other.date)) {
             return false;
-		}
+        }
     } else if (this.date !== other.date) {
         return false;
-	}
-    if (this.score) !== other.score) {
+    }
+    if (this.score !== other.score) {
         return false;
-	}
-    if (this.value) !== other.value) {
+    }
+    if (this.value !== other.value) {
         return false;
-	}
-    return true;  
+    }
+    return true;
 };

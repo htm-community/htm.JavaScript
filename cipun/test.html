@@ -4,7 +4,13 @@
 <script src="../nupic.util/Tuple.js"></script>
 
 <script>
-	console.log(null.hashCode());
+	var arr = [1,2,3,4,5];
+	console.log(arr.splice(0, 1)[0]);
+	console.log(arr);
+	
+	console.log(parseInt(HashCode.value(arr), 16));
+	console.log(parseInt('0x' + HashCode.value(arr)));
+	console.log(0x0 + HashCode.value(arr));
 
 	function set() {
 

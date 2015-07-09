@@ -101,6 +101,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * 
  * @author Numenta
  * @author David Ray
+ * @author Ralf Seliger (port to JavaScript)
  * @see Anomaly
  * @see AnomalyLikelihoodMetrics
  * @see Sample

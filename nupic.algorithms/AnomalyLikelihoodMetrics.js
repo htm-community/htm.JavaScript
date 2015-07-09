@@ -34,6 +34,7 @@ import org.numenta.nupic.algorithms.AnomalyLikelihood.AnomalyParams;
  * and updates.
  * 
  * @author David Ray
+ * @author Ralf Seliger (port to JavaScript)
  * @see AnomalyLikelihood
  * @see AnomalyLikelihoodTest
  */

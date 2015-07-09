@@ -1,5 +1,6 @@
 Progress towards replicating the htm.java network demo 
-(translated: +, not yet translated: -):
+translation to JavaScript finished: +
+not yet translated to JavaScript (still Java): -
 
 + Statistic.js
 + Sample.js
@@ -23,6 +24,6 @@ Progress towards replicating the htm.java network demo
 - LogEncoder.js
 - RandomDistributedScalarEncoder.js
 - SDRCategoryEncoder.js
-- MovingAvarege.js
++ MovingAverege.js
 - AnomalyLikelihood.js
 - AnomalyLikelihoodMetric.js

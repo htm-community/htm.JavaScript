@@ -184,8 +184,8 @@ ClassifierResult.prototype.stepSet = function() { // int[](void)
 ClassifierResult.prototype.hashCode = function() { // int(void)
     var prime = 31;
     var result = 1;
-    result = prime * result + HashCode.value(this.actualValues);
-    result = prime * result + (isNullOrUndefined(this.probabilities) ? 0 : HashCode.value(this.probabilities));
+    result = prime * result + parseInt(HashCode.value(this.actualValues), 16);
+    result = prime * result + (isNullOrUndefined(this.probabilities) ? 0 : parseInt(HashCode.value(this.probabilities), 16));
     return result;
 };
 

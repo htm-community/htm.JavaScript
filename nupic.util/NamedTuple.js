@@ -151,7 +151,7 @@ NemedTuple.prototype.hashCode() { // int(void)
     if (this.hash === 0) {
         var prime = 31;
         var result = Tuple.prototype._hashCode();
-        result = prime * result + HashCode.value(this.entries);
+        result = prime * result + parseInt(HashCode.value(this.entries), 16);
         this.hash = result;
     }
     return this.hash;

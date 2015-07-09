@@ -62,6 +62,7 @@ import rx.Subscriber;
  * 
  * 
  * @author cogmission
+ * @author Ralf Seliger (port to JavaScript)
  *
  */
 public class NetworkAPIDemo {

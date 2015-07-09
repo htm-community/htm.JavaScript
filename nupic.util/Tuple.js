@@ -91,7 +91,7 @@ Tuple.prototype.toString = function() { // String(void) {
 Tuple.prototype._hashCode = function() { // int(void)
     var prime = 31;
     var result = 1;
-    result = prime * result + HashCode.value(this.container);
+    result = prime * result + parseInt(HashCode.value(this.container), 16);
     return result;
 };
 
