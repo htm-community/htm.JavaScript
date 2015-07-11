@@ -32,7 +32,7 @@
  * @param objects
  */
 function NamedTuple(keys, ...objects) { // NamedTuple(String[], Objects...)
-    Tuple.call(this, this.Bucket.prototype.interleave(keys, objects));
+    Tuple.call(this, this.interleave(keys, objects));
 
     this.hash = 0; // int
 
@@ -358,7 +358,7 @@ NamedTuple.prototype.Bucket.prototype.equals = function(obj) { // boolean(Object
  * @param second    the second array
  * @return
  */
-NamedTuple.prototype.Bucket.prototype.interleave = function(first, second) { // <F, S> Object[](F, S)
+NamedTuple.prototype.interleave = function(first, second) { // <F, S> Object[](F, S)
     var flen = first.length;
     var slen = second.length;
     var retVal = newArray([flen + slen], null);

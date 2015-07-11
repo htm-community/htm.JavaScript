@@ -84,7 +84,6 @@ import org.numenta.nupic.util.Tuple;
  * all calls must precede any operations on any of the supplied streams. 
  * </p><p>
  * @author David Ray
- * @author Ralf Seliger (port to JavaScript)
  *
  * @param <T>   the input type (i.e. File, URL, etc.)
  */

@@ -19,19 +19,6 @@
  * http://numenta.org/licenses/
  * ---------------------------------------------------------------------
  */
-
-package org.numenta.nupic.algorithms;
-
-import gnu.trove.list.TDoubleList;
-import gnu.trove.list.array.TDoubleArrayList;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.numenta.nupic.util.ArrayUtils;
-
-
 /**
  * This module analyzes and estimates the distribution of averaged anomaly scores
  * from a CLA model. Given a new anomaly score `s`, estimates `P(score >= s)`.
@@ -85,71 +72,86 @@ import org.numenta.nupic.util.ArrayUtils;
  * @see AnomalyTest
  * @see AnomalyLikelihoodTest
  */
-public abstract class Anomaly {
+function Anomaly(...args) {
     /** Modes to use for factory creation method */
-    public enum Mode { PURE, LIKELIHOOD, WEIGHTED };
-    
+    this.Mode = {
+        PURE: "PURE",
+        LIKELIHOOD: "LIKELIHOOD",
+        WEIGHTED: "WEIGHTED"
+    };
+
     // Instantiation keys
-    public static final int VALUE_NONE = -1;
-    public static final String KEY_MODE = "mode".intern();
-    public static final String KEY_LEARNING_PERIOD = "claLearningPeriod";
-    public static final String KEY_ESTIMATION_SAMPLES = "estimationSamples";
-    public static final String KEY_USE_MOVING_AVG = "useMovingAverage";
-    public static final String KEY_WINDOW_SIZE = "windowSize".intern();
-    public static final String KEY_IS_WEIGHTED = "isWeighted";
+    this.VALUE_NONE = -1;
+    this.KEY_MODE = "mode";
+    this.KEY_LEARNING_PERIOD = "claLearningPeriod";
+    this.KEY_ESTIMATION_SAMPLES = "estimationSamples";
+    this.KEY_USE_MOVING_AVG = "useMovingAverage";
+    this.KEY_WINDOW_SIZE = "windowSize";
+    this.KEY_IS_WEIGHTED = "isWeighted";
     // Configs
-    public static final String KEY_DIST = "distribution".intern();
-    public static final String KEY_MVG_AVG = "movingAverage".intern();
-    public static final String KEY_HIST_LIKE = "historicalLikelihoods".intern();
-    public static final String KEY_HIST_VALUES = "historicalValues".intern();
-    public static final String KEY_TOTAL = "total".intern();
-    
+    this.KEY_DIST = "distribution";
+    this.KEY_MVG_AVG = "movingAverage";
+    this.KEY_HIST_LIKE = "historicalLikelihoods";
+    this.KEY_HIST_VALUES = "historicalValues";
+    this.KEY_TOTAL = "total";
+
     // Computational argument keys
-    public final static String KEY_MEAN = "mean".intern();
-    public final static String KEY_STDEV = "stdev".intern();
-    public final static String KEY_VARIANCE = "variance".intern();
-    
-    protected MovingAverage movingAverage;
-    
-    protected boolean useMovingAverage;
-    
+    this.KEY_MEAN = "mean";
+    this.KEY_STDEV = "stdev";
+    this.KEY_VARIANCE = "variance";
+
+    var that = this;
+
     /**
      * Constructs a new {@code Anomaly}
      */
-    public Anomaly() {
-        this(false, -1);
+    var Anomaly0 = function() { // Anomaly(void)
+        Anomaly2(false, -1);
     }
-    
+
     /**
      * Constructs a new {@code Anomaly}
      * 
      * @param useMovingAverage  indicates whether to apply and store a moving average
      * @param windowSize        size of window to average over
      */
-    protected Anomaly(boolean useMovingAverage, int windowSize) {
-        this.useMovingAverage = useMovingAverage;
-        if(this.useMovingAverage) {
-            if(windowSize < 1) {
-                throw new IllegalArgumentException(
+    var Anomaly2 = function(useMovingAverage, windowSize) { // Anomaly(boolean, int)
+        that.useMovingAverage = useMovingAverage;
+        if (that.useMovingAverage) {
+            if (windowSize < 1) {
+                throw new Error(
                     "Window size must be > 0, when using moving average.");
             }
-            movingAverage = new MovingAverage(null, windowSize);
+            that.movingAverage = new MovingAverage(null, windowSize);
         }
     }
-    
+
+    if (args.length === 0) {
+        Anomaly0();
+    } else if (args.length === 2) {
+        Anomaly2(args[0], args[1]);
+    } else {
+        throw new Error("No constructor found for Anomaly");
+    }
+};
+
+Anomaly.prototype.create(...args) {
+
+    var that = this;
+
     /**
      * Convenience method to create a simplistic Anomaly computer in 
      * {@link Mode#PURE}
      *  
      * @return
      */
-    public static Anomaly create() {
-        Map<String, Object> params = new HashMap<>();
-        params.put(KEY_MODE, Mode.PURE);
-        
-        return create(params);
+    var create0 = function() { // Anomaly(void)
+        var params = new Map < > ();
+        params.set(that.KEY_MODE, that.Mode.PURE);
+
+        return create1(params);
     }
-    
+
     /**
      * Returns an {@code Anomaly} configured to execute the type
      * of calculation specified by the {@link Mode}, and whether or
@@ -160,180 +162,188 @@ public abstract class Anomaly {
      * @param   p       Map 
      * @return
      */
-    public static Anomaly create(Map<String, Object> params) {
-        boolean useMovingAvg = (boolean)params.getOrDefault(KEY_USE_MOVING_AVG, false);
-        int windowSize = (int)params.getOrDefault(KEY_WINDOW_SIZE, -1);
-        if(useMovingAvg && windowSize < 1) {
-            throw new IllegalArgumentException("windowSize must be > 0, when using moving average.");
-        }
-        
-        Mode mode = (Mode)params.get(KEY_MODE);
-        if(mode == null) {
-            throw new IllegalArgumentException("MODE cannot be null.");
-        }
-        
-        switch(mode) {
-           case PURE: return new Anomaly(useMovingAvg, windowSize) {
-            @Override
-            public double compute(int[] activeColumns, int[] predictedColumns, double inputValue, long timestamp) {
-               double retVal = computeRawAnomalyScore(activeColumns, predictedColumns);
-               if(this.useMovingAverage) {
-                   retVal = movingAverage.next(retVal);
-               }
-               return retVal;
-            }};
-           case LIKELIHOOD: 
-           case WEIGHTED: {
-               boolean isWeighted = (boolean)params.getOrDefault(KEY_IS_WEIGHTED, false);
-               int claLearningPeriod = (int)params.getOrDefault(KEY_LEARNING_PERIOD, VALUE_NONE);
-               int estimationSamples = (int)params.getOrDefault(KEY_ESTIMATION_SAMPLES, VALUE_NONE);
-               
-               return new AnomalyLikelihood(useMovingAvg, windowSize, isWeighted, claLearningPeriod, estimationSamples);
-           }
-           default: return null;
-       }
-    }
-    
-    /**
-     * The raw anomaly score is the fraction of active columns not predicted.
-     * 
-     * @param   activeColumns           an array of active column indices
-     * @param   prevPredictedColumns    array of column indices predicted in the 
-     *                                  previous step
-     * @return  anomaly score 0..1 
-     */
-    public static double computeRawAnomalyScore(int[] activeColumns, int[] prevPredictedColumns) {
-        double score = 0;
-        
-        int nActiveColumns = activeColumns.length;
-        if(nActiveColumns > 0) {
-            // Test whether each element of a 1-D array is also present in a second
-            // array. Sum to get the total # of columns that are active and were
-            // predicted.
-            score = ArrayUtils.in1d(activeColumns, prevPredictedColumns).length;
-            // Get the percent of active columns that were NOT predicted, that is
-            // our anomaly score.
-            score = (nActiveColumns - score) / (double)nActiveColumns;
-        }else if(prevPredictedColumns.length > 0) {
-            score = 1.0d;
-        }
-        
-        return score;
-    }
-    
-    /**
-     * Compute the anomaly score as the percent of active columns not predicted.
-     * 
-     * @param activeColumns         array of active column indices
-     * @param predictedColumns      array of columns indices predicted in this step
-     *                              (used for anomaly in step T+1)
-     * @param inputValue            (optional) value of current input to encoders 
-     *                              (eg "cat" for category encoder)
-     *                              (used in anomaly-likelihood)
-     * @param timestamp             timestamp: (optional) date timestamp when the sample occurred
-     *                              (used in anomaly-likelihood)
-     * @return
-     */
-    public abstract double compute(int[] activeColumns, int[] predictedColumns, double inputValue, long timestamp);
-    
-    
-    //////////////////////////////////////////////////////////////////////////////////////
-    //                            Inner Class Definitions                               //
-    //////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * Container to hold interim {@link AnomalyLikelihood} calculations.
-     * 
-     * @author David Ray
-     * @see AnomalyLikelihood
-     * @see MovingAverage
-     */
-    public class AveragedAnomalyRecordList {
-        List<Sample> averagedRecords;
-        TDoubleList historicalValues;
-        double total;
-        
-        /**
-         * Constructs a new {@code AveragedAnomalyRecordList}
-         * 
-         * @param averagedRecords       List of samples which are { timestamp, average, value } at a data point
-         * @param historicalValues      List of values of a given window size (moving average grouping)
-         * @param total                 Sum of all values in the series
-         */
-        public AveragedAnomalyRecordList(List<Sample> averagedRecords, TDoubleList historicalValues, double total) {
-            this.averagedRecords = averagedRecords;
-            this.historicalValues = historicalValues;
-            this.total = total;
-        }
-        
-        /**
-         * Returns a list of the averages in the contained averaged record list.
-         * @return
-         */
-        public TDoubleList getMetrics() {
-            TDoubleList retVal = new TDoubleArrayList();
-            for(Sample s : averagedRecords) {
-                retVal.add(s.score);
-            }
-            
-            return retVal;
-        }
-        
-        /**
-         * Returns a list of the sample values in the contained averaged record list.
-         * @return
-         */
-        public TDoubleList getSamples() {
-            TDoubleList retVal = new TDoubleArrayList();
-            for(Sample s : averagedRecords) {
-                retVal.add(s.value);
-            }
-            
-            return retVal;
-        }
-        
-        /**
-         * Returns the size of the count of averaged records (i.e. {@link Sample}s)
-         * @return
-         */
-        public int size() {
-            return averagedRecords.size(); //let fail if null
+    var create1 = function(params) { // Anomaly(Map<String, Object>)
+        var useMovingAvg = params.has(that.KEY_USE_MOVING_AVG) ? params.get(that.KEY_USE_MOVING_AVG) : false;
+        var windowSize = params.has(that.KEY_WINDOW_SIZE) ? params.get(that.KEY_WINDOW_SIZE) : -1;
+        if (useMovingAvg && windowSize < 1) {
+            throw new Error("windowSize must be > 0, when using moving average.");
         }
 
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((averagedRecords == null) ? 0 : averagedRecords.hashCode());
-            result = prime * result + ((historicalValues == null) ? 0 : historicalValues.hashCode());
-            long temp;
-            temp = Double.doubleToLongBits(total);
-            result = prime * result + (int)(temp ^ (temp >>> 32));
-            return result;
+        var mode = params.get(that.KEY_MODE);
+        if (isNullOrUndefined(mode)) {
+            throw new Error("MODE cannot be null.");
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if(this == obj)
-                return true;
-            if(obj == null)
-                return false;
-            if(getClass() != obj.getClass())
-                return false;
-            AveragedAnomalyRecordList other = (AveragedAnomalyRecordList)obj;
-            if(averagedRecords == null) {
-                if(other.averagedRecords != null)
-                    return false;
-            } else if(!averagedRecords.equals(other.averagedRecords))
-                return false;
-            if(historicalValues == null) {
-                if(other.historicalValues != null)
-                    return false;
-            } else if(!historicalValues.equals(other.historicalValues))
-                return false;
-            if(Double.doubleToLongBits(total) != Double.doubleToLongBits(other.total))
-                return false;
-            return true;
+        switch (mode) {
+            case "PURE:"
+            return new Anomaly(useMovingAvg, windowSize);
+            case "LIKELIHOOD":
+            case "WEIGHTED":
+                {
+                    var isWeighted = params.has(that.KEY_IS_WEIGHTED) ? params.get(that.KEY_IS_WEIGHTED) : false;
+                    var claLearningPeriod = params.has(that.KEY_LEARNING_PERIOD) ? params.get(that.KEY_LEARNING_PERIOD) : that.VALUE_NONE;
+                    var estimationSamples = params.has(that.KEY_ESTIMATION_SAMPLES) ? params.get(that.KEY_ESTIMATION_SAMPLES) : that.VALUE_NONE;
+
+                    return new AnomalyLikelihood(useMovingAvg, windowSize, isWeighted, claLearningPeriod, estimationSamples);
+                }
+            default:
+                return null;
         }
     }
-    
-}
+
+    if (args.length === 0) {
+        return create0();
+    } else if (args.length === 1) {
+        return create1(args[0]);
+    } else {
+        throw new Error("No method found for call to create");
+    }
+};
+
+/**
+ * The raw anomaly score is the fraction of active columns not predicted.
+ * 
+ * @param   activeColumns           an array of active column indices
+ * @param   prevPredictedColumns    array of column indices predicted in the 
+ *                                  previous step
+ * @return  anomaly score 0..1 
+ */
+Anomaly.prototype.computeRawAnomalyScore(activeColumns, prevPredictedColumns) { // double(int[], int[])
+    var score = 0;
+
+    var nActiveColumns = activeColumns.length;
+    if (nActiveColumns > 0) {
+        // Test whether each element of a 1-D array is also present in a second
+        // array. Sum to get the total # of columns that are active and were
+        // predicted.
+        score = ArrayUtils.in1d(activeColumns, prevPredictedColumns).length;
+        // Get the percent of active columns that were NOT predicted, that is
+        // our anomaly score.
+        score = (nActiveColumns - score) / nActiveColumns;
+    } else if (prevPredictedColumns.length > 0) {
+        score = 1.0;
+    }
+
+    return score;
+};
+
+/**
+ * Compute the anomaly score as the percent of active columns not predicted.
+ * 
+ * @param activeColumns         array of active column indices
+ * @param predictedColumns      array of columns indices predicted in this step
+ *                              (used for anomaly in step T+1)
+ * @param inputValue            (optional) value of current input to encoders 
+ *                              (eg "cat" for category encoder)
+ *                              (used in anomaly-likelihood)
+ * @param timestamp             timestamp: (optional) date timestamp when the sample occurred
+ *                              (used in anomaly-likelihood)
+ * @return
+ */
+Anomaly.prototype.compute = function(activeColumns, predictedColumns, inputValue, timestamp) { // double(int[], int[], double, long)
+    var retVal = this.computeRawAnomalyScore(activeColumns, predictedColumns);
+    if (this.useMovingAverage) {
+        retVal = this.movingAverage.next(retVal);
+    }
+    return retVal;
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+//                            Inner Class Definitions                               //
+//////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Container to hold interim {@link AnomalyLikelihood} calculations.
+ * 
+ * @author David Ray
+ * @author Ralf Seliger (port to JavaScript)
+ * @see AnomalyLikelihood
+ * @see MovingAverage
+ */
+/**
+ * Constructs a new {@code AveragedAnomalyRecordList}
+ * 
+ * @param averagedRecords       List of samples which are { timestamp, average, value } at a data point
+ * @param historicalValues      List of values of a given window size (moving average grouping)
+ * @param total                 Sum of all values in the series
+ */
+Anomaly.prototype.AveragedAnomalyRecordList = function(averagedRecords, historicalValues, total) { // AveragedAnomalyRecordList(List < Sample >, TDoubleList, double)
+    this.averagedRecords = averagedRecords;
+    this.historicalValues = historicalValues;
+    this.total = total;
+};
+
+/**
+ * Returns a list of the averages in the contained averaged record list.
+ * @return
+ */
+Anomaly.prototype.AveragedAnomalyRecordList.prototype.getMetrics = function() { // TDoubleList(void)
+    var retVal = [];
+    for (var s of this.averagedRecords) {
+        retVal.push(s.score);
+    }
+
+    return retVal;
+};
+
+/**
+ * Returns a list of the sample values in the contained averaged record list.
+ * @return
+ */
+Anomaly.prototype.AveragedAnomalyRecordList.prototype.getSamples = function() { // TDoubleList(void)
+    var retVal = [];
+    for (var s of this.averagedRecords) {
+        retVal.push(s.value);
+    }
+
+    return retVal;
+};
+
+/**
+ * Returns the size of the count of averaged records (i.e. {@link Sample}s)
+ * @return
+ */
+Anomaly.prototype.AveragedAnomalyRecordList.prototype.size = function() { // int(void)
+    return this.averagedRecords.length; //let fail if null
+};
+
+Anomaly.prototype.AveragedAnomalyRecordList.prototype.hashCode = function() { // int(void)
+    var prime = 31;
+    var result = 1;
+    result = prime * result + (isNullOrUndefined(this.averagedRecords) ? 0 : parseInt(HashCode.value(this.averagedRecords), 16));
+    result = prime * result + (isNullOrUndefined(this.historicalValues) ? 0 : parseInt(HashCode.value(this.historicalValues), 16));
+    var temp;
+    temp = total;
+    result = prime * result + Math.floor(temp ^ (temp >>> 32));
+    return result;
+};
+
+Anomaly.prototype.AveragedAnomalyRecordList.prototype.equals = function(obj) { // boolean(Object)
+    if (this === obj) {
+        return true;
+    }
+    if (isNullOrUndefined(obj)) {
+        return false;
+    }
+    if (this.constructor !== obj.constructor) {
+        return false;
+    }
+    var other = obj;
+    if (isNullOrUndefined(this.averagedRecords)) {
+        if (!isNullOrUndefined(other.averagedRecords)) {
+            return false;
+        }
+    } else if (!equals(this.averagedRecords, other.averagedRecords)) {
+        return false;
+    }
+    if (isNullOrUndefined(this.historicalValues)) {
+        if (!isNullOrUndefined(other.historicalValues)) {
+            return false;
+        }
+    } else if (!equals(this.historicalValues, other.historicalValues)) {
+        return false;
+    }
+    if (this.total !== other.total) {
+        return false;
+    }
+    return true;
+};

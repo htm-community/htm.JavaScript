@@ -4,6 +4,41 @@
 <script src="../nupic.util/Tuple.js"></script>
 
 <script>
+	var Anomaly = function(x) {
+		this.x = x;
+	}
+		
+	Anomaly.prototype.create = function(y) {
+		return new Anomaly(y);
+	}
+	
+	Anomaly.prototype.compute = function(z) {
+		this.x = z;
+	}
+	
+	var foo = new Anomaly.prototype.create(10);
+	console.log(foo.x);
+	foo.compute(20);
+	console.log(foo.x);
+
+	var bar = new Anomaly(30);
+	console.log(bar.x);
+	
+	
+	
+	
+	
+
+	var Mode  = { PURE: "pure", LIKELIHOOD: "likelihood", WEIGHTED: "weighted" };
+	console.log(Mode.PURE);		// pure
+	console.log(Mode["PURE"]);	// pure
+	console.log(Mode[PURE]);	// Error
+
+	console.log(HashCode.value(""));
+	console.log(HashCode.value([]));
+	console.log(HashCode.value(null));
+	console.log(HashCode.value(undefined));
+	
 	var arr = [1,2,3,4,5];
 	console.log(arr.splice(0, 1)[0]);
 	console.log(arr);

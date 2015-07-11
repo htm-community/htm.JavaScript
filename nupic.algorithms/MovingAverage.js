@@ -63,54 +63,69 @@ function MovingAverage(...args) {
         MovingAverage2(args[0], args[1]);
     } else if (args.length === 3) {
         MovingAverage3(args[0], args[1], args[2]);
+    } else {
+        throw new Error("No constructor found for MovingAverage");
     }
 };
 
-/**
- * Routine for computing a moving average
- * 
- * @param slidingWindow     a list of previous values to use in the computation that
- *                          will be modified and returned
- * @param total             total the sum of the values in the  slidingWindow to be used in the
- *                          calculation of the moving average
- * @param newVal            newVal a new number to compute the new windowed average
- * @param windowSize        windowSize how many values to use in the moving window
- * @return
- */
-MovingAverage.prototype.compute = function(slidingWindow, total, newVal, windowSize) { // Calculation(TDoubleList, double, double, int)
-    return this.compute(null, slidingWindow, total, newVal, windowSize);
-};
+MovingAverage.prototype.compute = function(...args) {
 
-/**
- * Internal method which does actual calculation
- * 
- * @param calc              Re-used calculation object
- * @param slidingWindow     a list of previous values to use in the computation that
- *                          will be modified and returned
- * @param total             total the sum of the values in the  slidingWindow to be used in the
- *                          calculation of the moving average
- * @param newVal            newVal a new number to compute the new windowed average
- * @param windowSize        windowSize how many values to use in the moving window
- * @return
- */
-MovingAverage.prototype.compute = function(
-    calc, slidingWindow, total, newVal, windowSize) { // Calculation(Calculation, TDoubleList, double, double, int)
+    var that = this;
 
-    if (isNullOrUndefined(slidingWindow) || slidingWindow.length === 0) {
-        throw new Error("slidingWindow cannot be null.");
+    /**
+     * Routine for computing a moving average
+     * 
+     * @param slidingWindow     a list of previous values to use in the computation that
+     *                          will be modified and returned
+     * @param total             total the sum of the values in the  slidingWindow to be used in the
+     *                          calculation of the moving average
+     * @param newVal            newVal a new number to compute the new windowed average
+     * @param windowSize        windowSize how many values to use in the moving window
+     * @return
+     */
+    var compute4 = function(slidingWindow, total, newVal, windowSize) { // Calculation(TDoubleList, double, double, int)
+        return compute5(null, slidingWindow, total, newVal, windowSize);
     }
 
-    if (slidingWindow.length === windowSize) {
-        total -= slidingWindow.splice(0, 1)[0];
-    }
-    slidingWindow.push(newVal);
-    total += newVal;
+    /**
+     * Internal method which does actual calculation
+     * 
+     * @param calc              Re-used calculation object
+     * @param slidingWindow     a list of previous values to use in the computation that
+     *                          will be modified and returned
+     * @param total             total the sum of the values in the  slidingWindow to be used in the
+     *                          calculation of the moving average
+     * @param newVal            newVal a new number to compute the new windowed average
+     * @param windowSize        windowSize how many values to use in the moving window
+     * @return
+     */
+    var compute5 = function(
+        calc, slidingWindow, total, newVal, windowSize) { // Calculation(Calculation, TDoubleList, double, double, int)
 
-    if (isNullOrUndefined(calc)) {
-        return new Calculation(slidingWindow, total / slidingWindow.length, total);
+        if (isNullOrUndefined(slidingWindow) || slidingWindow.length === 0) {
+            throw new Error("slidingWindow cannot be null.");
+        }
+
+        if (slidingWindow.length === windowSize) {
+            total -= slidingWindow.splice(0, 1)[0];
+        }
+        slidingWindow.push(newVal);
+        total += newVal;
+
+        if (isNullOrUndefined(calc)) {
+            return new Calculation(slidingWindow, total / slidingWindow.length, total);
+        }
+
+        return that.copyInto(calc, slidingWindow, total / slidingWindow.length, total);
     }
 
-    return this.copyInto(calc, slidingWindow, total / slidingWindow.length, total);
+    if (args.length === 4) {
+        return compute4(args[0], args[1], args[2], args[3]);
+    } else if (args.length === 5) {
+        return compute5(args[0], args[1], args[2], args[3], args[4]);
+    } else {
+        throw new Error("No method found for call to compute");
+    }
 };
 
 /**
@@ -219,6 +234,8 @@ MovingAverage.prototype.Calculation = function(...args) {
         Calculation0();
     } else if (arge.length === 3) {
         Calculation3(args[0], args[1], args[2]);
+    } else {
+        throw new Error("No constructor found for Calculation");
     }
 };
 

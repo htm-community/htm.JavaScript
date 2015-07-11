@@ -1,6 +1,6 @@
 Progress towards replicating the htm.java network demo 
 translation to JavaScript finished: +
-not yet translated to JavaScript (still Java): -
+not yet translated to JavaScript (contains original Java code): -
 
 + Statistic.js
 + Sample.js
@@ -11,7 +11,7 @@ not yet translated to JavaScript (still Java): -
 - Network.js
 - Layer.js
 - Region.js
-- Anomaly.js
++ Anomaly.js
 - MultiEncoder.js
 - DateEncoder.js
 - SensorFactory.js
@@ -26,4 +26,4 @@ not yet translated to JavaScript (still Java): -
 - SDRCategoryEncoder.js
 + MovingAverege.js
 - AnomalyLikelihood.js
-- AnomalyLikelihoodMetric.js
++ AnomalyLikelihoodMetric.js

@@ -19,16 +19,6 @@
  * http://numenta.org/licenses/
  * ---------------------------------------------------------------------
  */
-
-package org.numenta.nupic.algorithms;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.numenta.nupic.algorithms.Anomaly.AveragedAnomalyRecordList;
-import org.numenta.nupic.algorithms.AnomalyLikelihood.AnomalyParams;
-
 /**
  * Container class to hold the results of {@link AnomalyLikelihood} estimations
  * and updates.
@@ -38,105 +28,105 @@ import org.numenta.nupic.algorithms.AnomalyLikelihood.AnomalyParams;
  * @see AnomalyLikelihood
  * @see AnomalyLikelihoodTest
  */
-public class AnomalyLikelihoodMetrics {
-    private AnomalyParams params;
-    private AveragedAnomalyRecordList aggRecordList;
-    private double[] likelihoods;
-    
-    /**
-     * Constructs a new {@code AnomalyLikelihoodMetrics}
-     * 
-     * @param likelihoods       array of pre-computed estimations
-     * @param aggRecordList     List of {@link Sample}s which are basically a set of date, value, average score,
-     *                          a list of historical values, and a running total.
-     * @param params            {@link AnomalyParams} which are a {@link Statistic}, array of likelihoods,
-     *                          and a {@link MovingAverage} 
-     */
-    public AnomalyLikelihoodMetrics(double[] likelihoods, AveragedAnomalyRecordList aggRecordList, AnomalyParams params) {
-        this.params = params;
-        this.aggRecordList = aggRecordList;
-        this.likelihoods = likelihoods;
-    }
-    
-    /**
-     * Utility method to copy this {@link AnomalyLikelihoodMetrics} object.
-     * @return
-     */
-    public AnomalyLikelihoodMetrics copy() {
-        List<Object> vals = new ArrayList<Object>();
-        for(String key : params.keys()) {
-            vals.add(params.get(key));
-        }
-        
-        return new AnomalyLikelihoodMetrics(
-            Arrays.copyOf(likelihoods, likelihoods.length), 
-            aggRecordList, 
-            new AnomalyParams(params.keys(), vals.toArray()));
-    }
-    
-    /**
-     * Returns the array of computed likelihoods
-     * @return
-     */
-    public double[] getLikelihoods() {
-        return likelihoods;
-    }
-    
-    /**
-     * <pre>
-     * Returns the record list which are:
-     *     List of {@link Sample}s which are basically a set of date, value, average score,
-     *     a list of historical values, and a running total.
-     * </pre>
-     * @return
-     */
-    public AveragedAnomalyRecordList getAvgRecordList() {
-        return aggRecordList;
-    }
-    
-    /**
-     * <pre>
-     * Returns the {@link AnomalyParams} which is:
-     *     a {@link Statistic}, array of likelihoods,
-     *     and a {@link MovingAverage}
-     * </pre> 
-     * @return
-     */
-    public AnomalyParams getParams() {
-        return params;
+/**
+ * Constructs a new {@code AnomalyLikelihoodMetrics}
+ * 
+ * @param likelihoods       array of pre-computed estimations
+ * @param aggRecordList     List of {@link Sample}s which are basically a set of date, value, average score,
+ *                          a list of historical values, and a running total.
+ * @param params            {@link AnomalyParams} which are a {@link Statistic}, array of likelihoods,
+ *                          and a {@link MovingAverage} 
+ */
+function AnomalyLikelihoodMetrics(likelihoods, aggRecordList, params) { // AnomalyLikelihoodMetrics(double[], AveragedAnomalyRecordList, AnomalyParams)
+    this.params = params; // AnomalyParams
+    this.aggRecordList = aggRecordList; // AveragedAnomalyRecordList
+    this.likelihoods = likelihoods; // double[]
+};
+
+/**
+ * Utility method to copy this {@link AnomalyLikelihoodMetrics} object.
+ * @return
+ */
+AnomalyLikelihoodMetrics.prototype.copy = function() { // AnomalyLikelihoodMetrics(void)
+    var vals = [];
+    for (var key of this.params.keys()) {
+        vals.push(this.params.get(key));
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aggRecordList == null) ? 0 : aggRecordList.hashCode());
-        result = prime * result + Arrays.hashCode(likelihoods);
-        result = prime * result + ((params == null) ? 0 : params.hashCode());
-        return result;
-    }
+    return new AnomalyLikelihoodMetrics(
+        copyOf(this.likelihoods),
+        this.aggRecordList,
+        new AnomalyParams(this.params.keys(), vals));
+};
 
-    @Override
-    public boolean equals(Object obj) {
-        if(this == obj)
-            return true;
-        if(obj == null)
-            return false;
-        if(getClass() != obj.getClass())
-            return false;
-        AnomalyLikelihoodMetrics other = (AnomalyLikelihoodMetrics)obj;
-        if(aggRecordList == null) {
-            if(other.aggRecordList != null)
-                return false;
-        } else if(!aggRecordList.equals(other.aggRecordList))
-            return false;
-        if(!Arrays.equals(likelihoods, other.likelihoods))
-            return false;
-        if(params == null) {
-            if(other.params != null)
-                return false;
-        } else if(!params.equals(other.params))
-            return false;
+/**
+ * Returns the array of computed likelihoods
+ * @return
+ */
+AnomalyLikelihoodMetrics.prototype.getLikelihoods = function() { // double[](void)
+    return this.likelihoods;
+};
+
+/**
+ * <pre>
+ * Returns the record list which are:
+ *     List of {@link Sample}s which are basically a set of date, value, average score,
+ *     a list of historical values, and a running total.
+ * </pre>
+ * @return
+ */
+AnomalyLikelihoodMetrics.prototype.getAvgRecordList = function() { // AveragedAnomalyRecordList(void)
+    return this.aggRecordList;
+};
+
+/**
+ * <pre>
+ * Returns the {@link AnomalyParams} which is:
+ *     a {@link Statistic}, array of likelihoods,
+ *     and a {@link MovingAverage}
+ * </pre> 
+ * @return
+ */
+AnomalyLikelihoodMetrics.prototype.getParams = function() { // AnomalyParams(void)
+    return this.params;
+};
+
+AnomalyLikelihoodMetrics.prototype.hashCode = function() { // int(void)
+    var prime = 31;
+    var result = 1;
+    result = prime * result + (isNullOrUndefined(this.aggRecordList) ? 0 : this.aggRecordList.hashCode());
+    result = prime * result + parseInt(HashCode.value(this.likelihoods), 16);
+    result = prime * result + (isNullOrUndefined(this.params) 0: this.params.hashCode());
+    return result;
+};
+
+AnomalyLikelihoodMetrics.prototype.equals = function(obj) { // boolean(Objact)
+    if (this === obj) {
         return true;
     }
-}
+    if (isNullOrUndefined(obj)) {
+        return false;
+    }
+    if (this.constructor !== obj.constructor) {
+        return false;
+    }
+    var other = obj;
+    if (isNullOrUndefined(this.aggRecordList)) {
+        if (!isNullOrUndefined(other.aggRecordList)) {
+            return false;
+        }
+    } else if (!this.aggRecordList.equals(other.aggRecordList)) {
+        return false;
+    }
+    if (!equals(this.likelihoods, other.likelihoods)) {
+        return false;
+    }
+    if (isNullOrUndefined(this.params)) {
+        if (other.params != null) {
+            return false;
+        }
+    } else if (!this.params.equals(other.params)) {
+        return false;
+    }
+    return true;
+};
